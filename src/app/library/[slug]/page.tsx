@@ -1,65 +1,101 @@
-"use client"
-import React from 'react'
-import './bookDetails.css'
-import { useParams } from 'next/navigation'
-import { bookdata } from '@/dummydata';
+// src/app/library/[slug]/page.tsx
+"use client";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { getBookById } from '@/server/bookData';
+import './bookDetails.css';
+import Loading from '@/components/Loading/Loading';
 
-function page() {
-    const {slug} = useParams();
-    const book = bookdata.filter(book=>{
-        return book.id===slug;
-    })
-  return (
-    <>
-    <div className='productDisplay'>
-        <div className="pd-left">
-            <div className="pd-img-list">
-                <img src={book[0].url} alt="" />
-                <img src={book[0].url} alt="" />
-                <img src={book[0].url} alt="" />
-                <img src={book[0].url} alt="" />
-            </div>
-            <div className="pd-img">
-                <img  className='pd-main-img' src={book[0].url} alt="" />
-            </div>
-        </div>
-        <div className="pd-right">
-            <span><h1>{book[0].name} </h1></span>
-            <span className='author_name'>{book[0].author}</span>
-
-            
-            <div className="pd-right-star">
-                <div className='rating'>(Rating by Inkspire)</div>
-                <img src="/star_icon.png" alt="" />
-                <img src="/star_icon.png" alt="" />
-                <img src="/star_icon.png" alt="" />
-                <img src="/star_icon.png" alt="" />
-                <img src="/star_icon.png" alt="" />
-            </div>
-
-            <div className="pd-right-prices">
-                <div className="pd-right-price-old">
-                    $300
-                </div>
-                <div className="pd-right-price-new">
-                    $250
-                </div>
-            </div>
-            <div className="pd-right-description">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Possimus, voluptas fuga? Accusantium, quos quae facere odit consectetur, nostrum aliquid laudantium sunt exercitationem officiis corrupti? Cum et sequi, modi tempore nisi voluptates ex blanditiis nostrum fugit commodi voluptatibus quibusdam ab soluta vitae dignissimos impedit similique quae cupiditate iusto. Atque, ducimus ad.
-            </div>
-
-            <span className='add_to_cart'><button onClick={()=>{console.log("product added to cart")}} >Add to Cart</button></span>
-            <span className='rent_now'><button onClick={()=>{console.log("Rent Now Clicked")}} >Rent Now</button></span>
-
-            <p className='pd-right-category'><span>Category: </span>Fiction and Literature</p>
-            <p className='pd-right-category'><span>Tags: </span>Mystery, Romance</p>
-            <p className='pd-right-category'><span>ISBN Number: </span>875673982</p>
-
-        </div>
-    </div>
-    </>
-  )
+interface res_el {
+    _id: string;
+    name: string;
+    url: string;
+    author: string;
 }
 
-export default page
+function Page() {
+  const { slug } = useParams();
+  const [book, setBook] = useState<res_el | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const slugString = Array.isArray(slug) ? slug[0] : slug;
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const bookdata = await getBookById(slugString);
+        setBook(bookdata);
+      } catch (error) {
+        console.error("Error fetching book:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBook();
+  }, [slug]);
+
+  if (loading) {
+    return <Loading/>;
+  }
+
+  if (!book) {
+    return <div>No Book Found</div>;
+  }
+
+  return (
+    <div className='productDisplay'>
+      <div className="pd-left">
+      <div className="pd-img-list">
+        <img src={book.url} alt={book.name} />
+        <img src={book.url} alt={book.name} />
+        <img src={book.url} alt={book.name} />
+        <img src={book.url} alt={book.name} />
+      </div>
+
+        <div className="pd-img">
+          <img className='pd-main-img' src={book.url} alt={book.name} />
+        </div>
+      </div>
+      <div className="pd-right">
+        <span><h1>{book.name}</h1></span>
+        <span className='author_name'>{book.author}</span>
+        
+        <div className="pd-right-star">
+          <div className='rating'>(Rating by Inkspire)</div>
+          <img src="/star_icon.png" alt="" />
+          <img src="/star_icon.png" alt="" />
+          <img src="/star_icon.png" alt="" />
+          <img src="/star_icon.png" alt="" />
+          <img src="/star_icon.png" alt="" />
+        </div>
+
+        <div className="pd-right-prices">
+          <div className="pd-right-price-old">
+            $30
+          </div>
+          <div className="pd-right-price-new">
+            $25
+          </div>
+        </div>
+
+        <div className="pd-right-description">
+        A book can be a window into new worlds, offering readers an escape from the everyday and a chance to explore the depths of human experience. Through its pages, readers are introduced to complex characters, intricate plots, and thought-provoking themes that challenge perceptions and inspire reflection.Books have the power to teach, entertain, and connect us to the broader human experience, leaving a lasting impact on the reader's mind and heart.
+        </div>
+
+        <span className='add_to_cart'>
+          <button onClick={() => { console.log("product added to cart") }}>Add to Cart</button>
+        </span>
+        <span className='rent_now'>
+          <button onClick={() => { console.log("Rent Now Clicked") }}>Rent Now</button>
+        </span>
+
+        <p className='pd-right-category'><span>Category: </span>Fiction and Literature</p>
+        <p className='pd-right-category'><span>Tags: </span>Mystery, Romance</p>
+        <p className='pd-right-category'><span>ISBN Number: </span>875673982</p>
+      </div>
+    </div>
+  );
+}
+
+export default Page;
