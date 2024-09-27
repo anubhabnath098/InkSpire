@@ -7,10 +7,13 @@ import Image from 'next/image';
 import Loading from '../Loading/Loading'
 
 interface res_el {
-  _id: string;
-  name: string;
-  url: string;
-  author: string;
+    _id: string;
+    name: string;
+    url: string;
+    author: string;
+    description: string;
+    price: number;
+    isbn: string;
 }
 
 const BookList: React.FC = () => {

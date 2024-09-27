@@ -7,10 +7,13 @@ import './bookDetails.css';
 import Loading from '@/components/Loading/Loading';
 
 interface res_el {
-    _id: string;
-    name: string;
-    url: string;
-    author: string;
+  _id: string;
+  name: string;
+  url: string;
+  author: string;
+  description: string;
+  price: number;
+  isbn: string;
 }
 
 function Page() {
@@ -71,16 +74,16 @@ function Page() {
         </div>
 
         <div className="pd-right-prices">
-          <div className="pd-right-price-old">
+          {/* <div className="pd-right-price-old">
             $30
-          </div>
+          </div> */}
           <div className="pd-right-price-new">
-            $25
+            {book.price}
           </div>
         </div>
 
         <div className="pd-right-description">
-        A book can be a window into new worlds, offering readers an escape from the everyday and a chance to explore the depths of human experience. Through its pages, readers are introduced to complex characters, intricate plots, and thought-provoking themes that challenge perceptions and inspire reflection.Books have the power to teach, entertain, and connect us to the broader human experience, leaving a lasting impact on the reader's mind and heart.
+            {book.description}
         </div>
 
         <span className='add_to_cart'>
@@ -92,7 +95,7 @@ function Page() {
 
         <p className='pd-right-category'><span>Category: </span>Fiction and Literature</p>
         <p className='pd-right-category'><span>Tags: </span>Mystery, Romance</p>
-        <p className='pd-right-category'><span>ISBN Number: </span>875673982</p>
+        <p className='pd-right-category'><span>ISBN Number: </span>{book.isbn}</p>
       </div>
     </div>
   );

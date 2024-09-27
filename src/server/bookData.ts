@@ -7,6 +7,9 @@ interface res_el {
     name: string;
     url: string;
     author: string;
+    description: string;
+    price: number;
+    isbn: string;
 }
 
 export async function bookData() {

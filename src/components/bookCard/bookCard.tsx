@@ -3,10 +3,13 @@ import Link from 'next/link'
 import React from 'react'
 
 interface res_el {
-  _id: string;
-  name: string;
-  url: string;
-  author: string;
+    _id: string;
+    name: string;
+    url: string;
+    author: string;
+    description: string;
+    price: number;
+    isbn: string;
 }
 
 function BookCard({ data }:{data: res_el}) {
