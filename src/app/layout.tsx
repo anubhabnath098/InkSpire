@@ -8,7 +8,7 @@ import {
   SignedOut,
 } from '@clerk/nextjs'
 import './globals.css'
-import { connectToDB } from '@/server/connectToDB'
+import connectToDB from '@/server/connectToDB'
 import { User } from '@/server/models/usermodels'
 export default async function RootLayout({
   children,
@@ -17,6 +17,9 @@ export default async function RootLayout({
 }) {
   const { userId } = auth()
   const user = await currentUser()
+  // console.log(user);
+  // console.log(user?.username)
+  
   connectToDB();
   if(user){
     let Newuser:any = await User.find({email:user.emailAddresses[0].emailAddress});
@@ -24,7 +27,7 @@ export default async function RootLayout({
     if(Newuser.length==0){
       Newuser = new User({
         clerkId:user.id,
-        username:user.username,
+        username:user?.username,
         email:user.emailAddresses[0].emailAddress,
         admin:false
       })
