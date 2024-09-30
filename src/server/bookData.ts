@@ -26,7 +26,6 @@ export async function getBookById(id: string){
   const book:res_el = await Book.findById(id).lean();
   if(!book) throw new Error("Book not found!!");
 
-  // console.log(booki);
+  // console.log(book);
   return book;
 }
-
