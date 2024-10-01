@@ -16,7 +16,7 @@ function Book() {
     <Image src="/got.webp" alt="" height={250} width={250}></Image>
     <div className='flex flex-col'>
         <h2>Earn Money by Lending books to people</h2>
-        <Link href="/lend"><button className='w-40 border-red-700 border-solid text-red-700 border-2 p-1 mt-4 rounded-md'>Lend a book</button></Link>
+        <Link href="/library/addbook"><button className='w-40 border-red-700 border-solid text-red-700 border-2 p-1 mt-4 rounded-md'>Lend a book</button></Link>
     </div>
     
 
