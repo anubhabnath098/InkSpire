@@ -4,6 +4,7 @@ import Book from "@/components/Book/Book";
 import Image from "next/image";
 import Search from "@/components/Search/Search";
 import BookSection from "@/components/BookSection/BookSection";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
 

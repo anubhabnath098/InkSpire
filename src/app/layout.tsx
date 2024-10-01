@@ -17,8 +17,6 @@ export default async function RootLayout({
 }) {
   const { userId } = auth()
   const user = await currentUser()
-  // console.log(user);
-  // console.log(user?.username)
   
   connectToDB();
   if(user){
@@ -33,13 +31,14 @@ export default async function RootLayout({
       })
       console.log(Newuser);
       Newuser.save();
+      localStorage.setItem('username',Newuser.username);
     }
   }
   return (
     // <ClerkProvider>
       <html lang="en">
         <body>
-            <ClerkProvider><div className="flex"><Navbar user={user}/></div>{children}</ClerkProvider>
+            <ClerkProvider><div className="flex"><Navbar user={JSON.stringify(user)}/></div>{children}</ClerkProvider>
         </body>
       </html>
     

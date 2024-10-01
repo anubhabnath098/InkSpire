@@ -10,6 +10,7 @@ interface res_el {
     description: string;
     price: number;
     isbn: string;
+    username:string
 }
 
 function BookCard({ data }:{data: res_el}) {
@@ -21,6 +22,7 @@ function BookCard({ data }:{data: res_el}) {
       <div className='flex w-full h-full justify-center items-center flex-col'>
         <h2 className='text-bold'>{data.name}</h2>
         <h3 className='text-sm'>{data.author}</h3>
+        <h3 className='text-sm'>{"Lender: "+data.username}</h3>
         <Link href={`/library/${data._id}`}><button className='w-40 border-red-700 border-solid text-red-700 border-2 p-1 mt-4 rounded-md'>Rent</button></Link>
       </div>
     </div>

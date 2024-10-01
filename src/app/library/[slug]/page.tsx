@@ -2,9 +2,9 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getBookById } from '@/server/bookData';
 import './bookDetails.css';
 import Loading from '@/components/Loading/Loading';
+import axios from 'axios';
 
 interface res_el {
   _id: string;
@@ -14,29 +14,37 @@ interface res_el {
   description: string;
   price: number;
   isbn: string;
+  username:string
 }
 
 function Page() {
-  const { slug } = useParams();
   const [book, setBook] = useState<res_el | null>(null);
+  const { slug } = useParams();
   const [loading, setLoading] = useState(true);
-
   const slugString = Array.isArray(slug) ? slug[0] : slug;
 
-  useEffect(() => {
-    const fetchBook = async () => {
-      try {
-        const bookdata = await getBookById(slugString);
-        setBook(bookdata);
-      } catch (error) {
-        console.error("Error fetching book:", error);
-      } finally {
+  useEffect(()=>{
+    const getBook = async()=>{
+      try{
+        const response = await axios.get(`http://localhost:3000/api/search/${slugString}`);
+        console.log(response);
+        if(response.data.book)
+          setBook(response.data.book);
+        else{
+          alert("message: "+response.data.message);
+        }
+      }
+      catch(err){
+        alert("An Error occured while fetching book: "+ err);
+      }
+      finally {
         setLoading(false);
       }
-    };
+    }
+    getBook();
+  },[slugString]);
+  
 
-    fetchBook();
-  }, [slug]);
 
   if (loading) {
     return <Loading/>;
@@ -62,7 +70,11 @@ function Page() {
       </div>
       <div className="pd-right">
         <span><h1>{book.name}</h1></span>
-        <span className='author_name'>{book.author}</span>
+        <div className="flex flex-col">
+          <span className='author_name text-xl'>{book.author}</span>
+          <span className="text-sm text-red-950">{"(Lended by "+book.username+")"}</span>
+        </div>
+        
         
         <div className="pd-right-star">
           <div className='rating'>(Rating by Inkspire)</div>
@@ -74,9 +86,6 @@ function Page() {
         </div>
 
         <div className="pd-right-prices">
-          {/* <div className="pd-right-price-old">
-            $30
-          </div> */}
           <div className="pd-right-price-new">
             {book.price}
           </div>
