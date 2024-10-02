@@ -1,8 +1,10 @@
+import Footer from '@/components/footer/Footer'
 import React from 'react'
 
 function page() {
   return (
-      <main className="h-screen w-full bg-red-300 flex flex-col gap-2 items-centre">
+    <>
+      <main className="h-screen w-full bg-red-300 flex flex-col gap-2 items-centre relative top-[50px]">
       <div className="w-3/4 bg-white p-4 mx-auto mt-12 h-[410px] shadow-lg rounded-md">
         <h1 className="text-3xl font-medium">Shopping Cart</h1>
         <p className="text-sm text-zinc-600 text-right">Price</p>
@@ -45,6 +47,8 @@ function page() {
         </div>
       </div>
     </main>
+    <Footer/>
+    </>
   )
 }
 

@@ -23,7 +23,7 @@ function BookCard({ data }:{data: res_el}) {
         <h2 className='text-bold'>{data.name}</h2>
         <h3 className='text-sm'>{data.author}</h3>
         <h3 className='text-sm'>{"Lender: "+data.username}</h3>
-        <Link href={`/library/${data._id}`}><button className='w-40 border-red-700 border-solid text-red-700 border-2 p-1 mt-4 rounded-md'>Rent</button></Link>
+        <Link href={`/library/${data._id}`}><button className='w-40 border-red-700 border-solid text-red-700 border-2 p-1 mt-4 rounded-md hover:bg-red-700 transition-all hover:text-white'>Rent</button></Link>
       </div>
     </div>
   )

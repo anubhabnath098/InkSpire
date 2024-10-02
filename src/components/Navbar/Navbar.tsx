@@ -42,7 +42,7 @@ function Navbar() {
   }
 
   return (
-    <div className='flex w-[95%] h-12 justify-between items-center mr-0'>
+    <div className='flex w-full h-12 justify-between items-center mr-0 fixed bg-white z-40'>
       <div className="font-bold text-red-700 w-full ml-5"><Link href="/">InkSpire</Link></div>
       <div className="flex w-full h-11 text-red-700 justify-evenly items-center">
         <Link href="/library"><div className="flex gap-1"><CollectionsBookmarkIcon/>Library</div></Link>

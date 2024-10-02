@@ -5,6 +5,7 @@ import Image from "next/image";
 import Search from "@/components/Search/Search";
 import BookSection from "@/components/BookSection/BookSection";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import Footer from "@/components/footer/Footer";
 
 export default async function Home() {
 
@@ -15,6 +16,7 @@ export default async function Home() {
       <Search/>
       <BookSection/>
       <Book/>
+      <Footer/>
     </div>
     
   );

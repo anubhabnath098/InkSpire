@@ -1,4 +1,5 @@
 "use client"
+import Footer from '@/components/footer/Footer';
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
@@ -160,6 +161,7 @@ const page = () => {
         </div>
       </form>
     </div>
+    <Footer/>
     </div>
   );
 };

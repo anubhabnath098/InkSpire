@@ -1,7 +1,7 @@
 // src/app/library/[slug]/page.tsx
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import './bookDetails.css';
 import Loading from '@/components/Loading/Loading';
 import axios from 'axios';
@@ -18,6 +18,10 @@ interface res_el {
 }
 
 function Page() {
+
+  const router = useRouter();
+  const [input, setInput] = useState(false);
+  const [duration,setDuration] = useState(0);
   const [book, setBook] = useState<res_el | null>(null);
   const { slug } = useParams();
   const [loading, setLoading] = useState(true);
@@ -43,6 +47,30 @@ function Page() {
     }
     getBook();
   },[slugString]);
+
+  const handleClick=async()=>{
+    if(input){
+      try{
+        const response = await axios.post(`http://localhost:3000/api/rent/${slugString}`,{
+        username:localStorage.getItem('username'),
+        duration:duration
+      })
+      if(response.data.status===true){
+        router.push("/orders");
+      }
+      else{
+        setInput(false);
+        alert(response.data.message);
+      }
+    }catch(err){
+      setInput(false);
+      alert("Issue. Try again later")
+    }
+    }
+    else{
+      setInput(true);
+    }
+  }
   
 
 
@@ -94,13 +122,15 @@ function Page() {
         <div className="pd-right-description">
             {book.description}
         </div>
-
-        <span className='add_to_cart'>
+      <div className="flex gap-4">
+      <span className='add_to_cart'>
           <button onClick={() => { console.log("product added to cart") }}>Add to Cart</button>
         </span>
-        <span className='rent_now'>
-          <button onClick={() => { console.log("Rent Now Clicked") }}>Rent Now</button>
+        <span className='rent_now flex items-center'>
+        {input&&(<div>Duration <input className='h-[40px] w-[70px] p-3 rounded' type="number" value={duration} onChange={e=>setDuration(parseInt(e.target.value))} placeholder='Enter Duration'/></div>)}<button onClick={handleClick}>Rent Now</button>
         </span>
+      </div>
+        
 
         <p className='pd-right-category'><span>Category: </span>Fiction and Literature</p>
         <p className='pd-right-category'><span>Tags: </span>Mystery, Romance</p>

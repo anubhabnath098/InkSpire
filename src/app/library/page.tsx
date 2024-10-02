@@ -1,5 +1,6 @@
 "use client"
 import Bookpart from '@/components/Bookpart/Bookpart'
+import Footer from '@/components/footer/Footer';
 import Loading from '@/components/Loading/Loading';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -49,9 +50,9 @@ function page() {
 
 
   return (
-    <div className='flex flex-col w-full'>
-      <div className="w-full flex justify-end border-2 h-[50px] items-center text-white border-white pr-6" ><span className='bg-red-400 w-[100px] cursor-pointer h-full text-center flex justify-center items-center rounded' onClick={e=>router.push("/library/addbook")}>Lend</span></div>
+    <div className='flex flex-col w-full relative top-[50px]'>
       <Bookpart books={books}/>
+      <Footer/>
     </div>
   )
 }

@@ -53,7 +53,7 @@ function Page() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen relative top-[50px]">
             <div className="bg-white p-6 border-2 border-red-950 rounded-lg w-full max-w-xl">
                 <div className="mb-4">
                     <label className="block text-red-950 font-semibold mb-2">Name:</label>

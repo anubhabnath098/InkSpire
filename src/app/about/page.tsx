@@ -1,3 +1,4 @@
+import Footer from "@/components/footer/Footer";
 import React from "react";
 
 const About: React.FC = () => {
@@ -85,9 +86,7 @@ const About: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <footer className="w-full mt-12 bg-red-700 text-center py-6">
-        <p className="text-white">&copy; 2024 Inkspire. All rights reserved.</p>
-      </footer>
+      <Footer/>
     </div>
   );
 };
