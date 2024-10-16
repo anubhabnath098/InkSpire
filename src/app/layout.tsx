@@ -38,7 +38,7 @@ export default async function RootLayout({
     // <ClerkProvider>
       <html lang="en">
         <body>
-            <ClerkProvider><div className="flex"><Navbar user={JSON.stringify(user)}/></div>{children}</ClerkProvider>
+            <ClerkProvider><div className="flex"><Navbar/></div>{children}</ClerkProvider>
         </body>
       </html>
     

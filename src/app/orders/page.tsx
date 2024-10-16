@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Loading from '@/components/Loading/Loading';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 interface Book {
     _id: string;
@@ -34,11 +37,29 @@ function Page() {
     const [rentedBooks, setRentedBooks] = useState<RentedBook[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
+    const [returnClick, setReturnClick] = useState(true);
+    const [deleteClick, setDeleteClick] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
+        const storedUsername = localStorage.getItem('username');
+        console.log("Retrieved username from localStorage:", storedUsername);
+        if (storedUsername) {
+            setUsername(storedUsername);
+        } else {
+            setError("No username found in localStorage");
+            
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!username) return;
+
         const fetchRentedBooks = async () => {
             try {
-                const response = await fetch(`/api/rent?username=${localStorage.getItem('username')}`);
+                const response = await fetch(`/api/rent?username=${username}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -52,14 +73,48 @@ function Page() {
         };
 
         fetchRentedBooks();
-    }, []);
+    }, [returnClick, deleteClick, username]);
 
+    // Handle book return
+    const handleReturn = async (id: string) => {
+        try {
+            const response = await axios.patch(`/api/rent/${id}`, {
+                isReturned: true,
+            });
+            if (response.data.status === true) {
+                alert("Book Returned Successfully");
+            } else {
+                alert("Can't Return Book. Try Again Later");
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+            setReturnClick(!returnClick); // Trigger re-fetch
+        }
+    };
+
+    // Handle book delete
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await axios.delete(`http://localhost:3000/api/rent/${id}`);
+            if (response.data.status === true) {
+                alert("Book Deleted Successfully from Orders");
+            } else {
+                alert("Can't Delete Book. Try Again Later");
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+            setDeleteClick(!deleteClick); // Trigger re-fetch
+        }
+    };
+
+    // Loading state
     if (loading) {
-        return (
-            <Loading/>
-        );
+        return <Loading />;
     }
 
+    // Error state
     if (error) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -73,7 +128,7 @@ function Page() {
             <h1 className="text-3xl font-bold mb-8 text-center">Your Rented Books</h1>
             <div className="space-y-6">
                 {rentedBooks.map((rental) => (
-                    <div 
+                    <div
                         key={rental._id}
                         className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 max-w-2xl mx-auto"
                     >
@@ -107,12 +162,30 @@ function Page() {
                                     </div>
                                 </div>
                                 <div className="mt-4">
-                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                        rental.isReturned 
-                                            ? 'bg-green-100 text-green-800' 
-                                            : 'bg-yellow-100 text-yellow-800'
-                                    }`}>
-                                        {rental.isReturned ? 'Returned' : 'Not Returned'}
+                                    <span className={`px-4 py-3 rounded text-sm font-medium `}>
+                                        {rental.isReturned ? (
+                                            <div className='flex gap-5'>
+                                                <button
+                                                    className='hover:underline font-bold text-green-700 text-lg'
+                                                    onClick={e => router.push(`/library/${rental.book._id}`)}
+                                                >
+                                                    Rent Again
+                                                </button>
+                                                <DeleteOutlineIcon
+                                                    className='hover:cursor-pointer'
+                                                    onClick={e => handleDelete(rental._id)}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <button
+                                                    className='hover:underline font-bold text-red-950 text-lg'
+                                                    onClick={e => handleReturn(rental._id)}
+                                                >
+                                                    Return
+                                                </button>
+                                            </div>
+                                        )}
                                     </span>
                                 </div>
                             </div>

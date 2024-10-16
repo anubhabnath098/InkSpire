@@ -8,19 +8,22 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Loading from '../Loading/Loading';
+import { auth } from '@clerk/nextjs/server';
+import { useRouter } from 'next/navigation';
+// import CheckUser from '../checkuser/CheckUser';
 
 function Navbar() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
   useEffect(() => {
     const updateUserState = () => {
-      try {
-
+      try{
         if (isLoaded && isSignedIn && user) {
           console.log('User logged in:', user);
-          localStorage.setItem('username', user?.username);
+          localStorage.setItem('username', user.username!);
           setIsLoggedIn(true);
         } else {
           console.log('No user logged in');
@@ -31,6 +34,7 @@ function Navbar() {
         console.error('Error updating user state:', err);
       } finally {
         setLoading(false);
+        router.refresh();
       }
     }
 

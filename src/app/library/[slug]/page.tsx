@@ -48,7 +48,7 @@ function Page() {
     getBook();
   },[slugString]);
 
-  const handleClick=async()=>{
+  const handleRent=async()=>{
     if(input){
       try{
         const response = await axios.post(`http://localhost:3000/api/rent/${slugString}`,{
@@ -70,6 +70,24 @@ function Page() {
     else{
       setInput(true);
     }
+  }
+
+  const handleCart=async()=>{
+    try{
+      const response = await axios.post(`http://localhost:3000/api/addtocart/${slugString}`,{
+      username:localStorage.getItem('username'),
+    })
+    if(response.data.status===true){
+      router.push("/cart");
+    }
+    else{
+      setInput(false);
+      alert(response.data.message);
+    }
+  }catch(err){
+    setInput(false);
+    alert("Issue. Try again later")
+  }
   }
   
 
@@ -124,10 +142,10 @@ function Page() {
         </div>
       <div className="flex gap-4">
       <span className='add_to_cart'>
-          <button onClick={() => { console.log("product added to cart") }}>Add to Cart</button>
+          <button onClick={handleCart}>Add to Cart</button>
         </span>
         <span className='rent_now flex items-center'>
-        {input&&(<div>Duration <input className='h-[40px] w-[70px] p-3 rounded' type="number" value={duration} onChange={e=>setDuration(parseInt(e.target.value))} placeholder='Enter Duration'/></div>)}<button onClick={handleClick}>Rent Now</button>
+        {input&&(<div>Duration <input className='h-[40px] w-[70px] p-3 rounded' type="number" value={duration} onChange={e=>setDuration(parseInt(e.target.value))} placeholder='Enter Duration'/></div>)}<button onClick={handleRent}>Rent Now</button>
         </span>
       </div>
         
