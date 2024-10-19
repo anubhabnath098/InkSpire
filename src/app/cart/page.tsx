@@ -38,6 +38,7 @@ function Page() {
     const [duration, setDuration] = useState(0);
     const [activeId, setActiveId] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
+    const [deleteClick, setDeleteClick] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -70,7 +71,7 @@ function Page() {
 
             fetchCartBooks();
         }
-    }, [username]);
+    }, [username, deleteClick]);
 
     if (loading) {
         return <Loading />;
@@ -85,7 +86,7 @@ function Page() {
     }
 
     const handleDelete = async (id: string) => {
-        setLoading(true);
+        
         try {
             const response = await axios.delete(`http://localhost:3000/api/addtocart/${id}`);
             if (!response.data) {
@@ -95,7 +96,8 @@ function Page() {
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
-            setLoading(false);
+            setDeleteClick(!deleteClick);
+            
         }
     };
 
