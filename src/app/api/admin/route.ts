@@ -44,45 +44,33 @@ export async function POST(req: NextRequest) {
     }
 }
 
-
 export async function GET(req: NextRequest) {
     try {
-        const url = new URL(req.url);
-        const username = url.searchParams.get('username');
         await connectToDB();
-        
-        // Need to await the User.findOne() query
-        const user = await User.findOne({ username });
-        
-        if (!user) {
-            return NextResponse.json(
-                { message: "User not found", status: false },
-                { status: 404 }
-            );
+
+        const { searchParams } = new URL(req.url);
+        const username = searchParams.get('username');
+
+        let query = {};
+
+        if (username) {
+            query = { username: { $ne: username } }; 
         }
 
-        if(user.admin===true){
-            const users = await User.find({});
+        const users = await User.find(query);
 
-            return NextResponse.json(
-                { message:"Fetch successful", users, status : true},
-                { status: 200}
-            )
-        }
-        else{
-            return NextResponse.json(
-                { message: "Access Denied", status: false},
-                {status:401}
-            )
-        }
+        return NextResponse.json(
+            { message: "Fetch successful", users, status: true },
+            { status: 200 }
+        );
 
-            
     } catch (error) {
         console.error('Error ', error);
         return NextResponse.json(
-            { message: "Internal Server Error", status: false }, 
+            { message: "Internal Server Error", status: false },
             { status: 500 }
         );
     }
 }
+
 

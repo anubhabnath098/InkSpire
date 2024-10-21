@@ -5,22 +5,12 @@ import Loading from '@/components/Loading/Loading';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-
-export interface res_el {
-  _id: string;
-  name: string;
-  url: string;
-  author: string;
-  description: string;
-  price: number;
-  isbn: string;
-  username:string
-}
+import { Book } from '../admin/page';
 function page() {
 
   const router = useRouter();
   
-  const [books, setBooks] = useState<Array<res_el| null>>([]);
+  const [books, setBooks] = useState<[Book]| []>([]);
   const [loading, setLoading] = useState(true);
 
 

@@ -5,6 +5,7 @@ import StoreIcon from '@mui/icons-material/Store';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Loading from '../Loading/Loading';
@@ -53,6 +54,7 @@ function Navbar() {
         <Link href="/orders"><div className="flex gap-1"><BookmarkBorderIcon/>Orders</div></Link>
         <Link href="/cart"><div className="flex gap-1"><ShoppingCartIcon/>Cart</div></Link>
         <Link href="/about"><div className="flex gap-1"><StoreIcon/>About</div></Link>
+        <Link href="/admin"><div className="flex gap-1"><AdminPanelSettingsIcon/>Dashboard</div></Link>
         {isSignedIn ? (
           <UserButton afterSignOutUrl="/" />
         ) : (
