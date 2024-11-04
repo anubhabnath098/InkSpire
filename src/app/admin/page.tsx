@@ -1,12 +1,13 @@
 "use client";
-import Details from '@/components/Details/Details';
-import Loading from '@/components/Loading/Loading';
-import DeleteIcon from '@mui/icons-material/Delete';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
-import authenticate from '@/server/action';
+import Details from "@/components/Details/Details";
+import Loading from "@/components/Loading/Loading";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import authenticate from "@/server/action";
+import { AdminDashboardComponent } from "@/components/admin-dashboard";
 
 interface User {
   _id: string;
@@ -50,9 +51,9 @@ export interface Rent {
 }
 
 function AdminPage() {
-  const { user, isLoaded,isSignedIn } = useUser();
-  const [password, setPassword] = useState<string>(''); 
-  const [access, setAccess] = useState<boolean>(false); 
+  const { user, isLoaded, isSignedIn } = useUser();
+  const [password, setPassword] = useState<string>("");
+  const [access, setAccess] = useState<boolean>(false);
   const [showUsers, setShowUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteClick, setDeleteClick] = useState(true);
@@ -67,15 +68,14 @@ function AdminPage() {
   useEffect(() => {
     if (!isSignedIn) {
       const checkUser = async () => {
-          await authenticate();
-        };
-        checkUser();
-  }
+        await authenticate();
+      };
+      checkUser();
+    }
     if (isLoaded && user) {
       const checkAdminStatus = async () => {
         setLoading(true);
         try {
-          console.log(user.username);
           const response = await axios.get(`/api/admin?username=${user.username}`);
           if (response.data.status === true) {
             setShowUsers(response.data.users);
@@ -120,46 +120,27 @@ function AdminPage() {
     setSelectedUserId(id);
     try {
       setLoading(true);
-      setError(null); 
-  
+      setError(null);
+
       const response = await fetch(`/api/admin/${id}`);
-  
+
       if (!response.ok) {
-        throw new Error('Failed to fetch user data');
+        throw new Error("Failed to fetch user data");
       }
-  
+
       const data = await response.json();
-  
+
       if (data.status) {
         setRentedBooks(data.data.rentedBooks);
         setCartItems(data.data.cartItems);
         setLendedBooks(data.data.lendedBooks);
       } else {
-        throw new Error(data.message || 'Unknown error occurred');
+        throw new Error(data.message || "Unknown error occurred");
       }
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch(`/api/admin/delete?id=${id}`, {
-        method: 'DELETE',
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.status) {
-        console.log("User deleted successfully:", data.message);
-        setDeleteClick(!deleteClick);
-      } else {
-        console.error("Failed to delete user:", data.message);
-      }
-    } catch (error) {
-      console.error("Error occurred while deleting user:", error);
     }
   };
 
@@ -186,20 +167,7 @@ function AdminPage() {
         <div>
           <div className="flex flex-col mt-4">
             {showUsers?.length > 0 ? (
-              showUsers.map((user) => (
-                <div className="flex gap-4" key={user.clerkId}>
-                  <span>{user.username}</span>
-                  <span>{user.email}</span>
-                  <span>{user.score.toString()}</span>
-                  <span>{user.reports.toString()}</span>
-                  <span 
-                    className="cursor-pointer underline" 
-                    onClick={() => handleUser(user._id)}> 
-                    more
-                  </span>
-                  <button onClick={() => handleDelete(user._id)}><DeleteIcon/></button>
-                </div>
-              ))
+              <AdminDashboardComponent users={showUsers} />
             ) : (
               <div>No users found</div>
             )}
@@ -207,7 +175,11 @@ function AdminPage() {
 
           {selectedUserId != null && (
             <div className="mt-4">
-              <Details rented={rentedBooks} cart={cartItems} lended={lendedBooks} />
+              <Details
+                rented={rentedBooks}
+                cart={cartItems}
+                lended={lendedBooks}
+              />
             </div>
           )}
         </div>
