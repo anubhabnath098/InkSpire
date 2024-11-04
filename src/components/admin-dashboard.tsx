@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Trash, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 
 interface User {
   _id: string;
@@ -26,6 +26,8 @@ interface User {
 
 export function AdminDashboardComponent({ users }: { users: User[] }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [localUsers, setLocalUsers] = useState<Array<User>>(users); // Local copy of users
+  const [filteredUsers, setFilteredUsers] = useState<Array<User>>(users);
 
   const handleDelete = async (id: string) => {
     try {
@@ -37,6 +39,15 @@ export function AdminDashboardComponent({ users }: { users: User[] }) {
 
       if (response.ok && data.status) {
         console.log("User deleted successfully:", data.message);
+
+        // Update both localUsers and filteredUsers
+        const updatedUsers = localUsers.filter((user) => user._id !== data.deletedUser._id);
+        setLocalUsers(updatedUsers);
+        setFilteredUsers(updatedUsers.filter(
+          (user) =>
+            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        ));
       } else {
         console.error("Failed to delete user:", data.message);
       }
@@ -45,11 +56,15 @@ export function AdminDashboardComponent({ users }: { users: User[] }) {
     }
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    setFilteredUsers(
+      localUsers.filter(
+        (user) =>
+          user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, localUsers]);
 
   const getScoreColor = (score: number) => {
     if (score >= 4) return "bg-green-500";
