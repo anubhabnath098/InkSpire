@@ -1,5 +1,4 @@
 "use client";
-
 import authenticate from "@/server/action";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
 
         await connectToDB();
         
-        // Need to await the User.findOne() query
         const user = await User.findOne({ username });
         
         if (!user) {
@@ -56,13 +55,28 @@ export async function GET(req: NextRequest) {
         if (username) {
             query = { username: { $ne: username } }; 
         }
-
+        const user = await User.findOne({ username });
         const users = await User.find(query);
 
-        return NextResponse.json(
-            { message: "Fetch successful", users, status: true },
-            { status: 200 }
-        );
+        if (!user) {
+            return NextResponse.json(
+                { message: "User not found", status: false },
+                { status: 404 }
+            );
+        }
+        if(user.admin===true){
+            return NextResponse.json(
+                { message: "Fetch successful", users, status: true },
+                { status: 200 }
+            );
+        }
+        else{
+            return NextResponse.json(
+                { message: "User is not an admin", status: false },
+                { status: 200 }
+            );
+        }
+        
 
     } catch (error) {
         console.error('Error ', error);

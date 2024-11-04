@@ -76,9 +76,7 @@ function AdminPage() {
       const checkAdminStatus = async () => {
         setLoading(true);
         try {
-          const response = await axios.get(
-            `/api/admin?username=${user.username}`
-          );
+          const response = await axios.get(`/api/admin?username=${user.username}`);
           if (response.data.status === true) {
             setShowUsers(response.data.users);
             setAccess(true);
@@ -96,7 +94,7 @@ function AdminPage() {
 
       checkAdminStatus();
     }
-  }, [isLoaded, user]);
+  }, [isLoaded, user, access]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -168,7 +166,7 @@ function AdminPage() {
       ) : (
         <div>
           <div className="flex flex-col mt-4">
-            {showUsers.length > 0 ? (
+            {showUsers?.length > 0 ? (
               <AdminDashboardComponent users={showUsers} />
             ) : (
               <div>No users found</div>
