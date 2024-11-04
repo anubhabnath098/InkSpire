@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     try {
         let body = await req.json();
         const {username, password} = body;
-
+        console.log(username,password);
         if (!username || !password) {
             return NextResponse.json(
                 { message: "Username and password is required", status: false }, 

@@ -2,10 +2,11 @@
 import Details from '@/components/Details/Details';
 import Loading from '@/components/Loading/Loading';
 import DeleteIcon from '@mui/icons-material/Delete';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import authenticate from '@/server/action';
 
 interface User {
   _id: string;
@@ -48,48 +49,36 @@ export interface Rent {
   updatedAt?: Date;
 }
 
-
 function AdminPage() {
-  const [username, setUsername] = useState<string | null>(null);
+  const { user, isLoaded,isSignedIn } = useUser();
   const [password, setPassword] = useState<string>(''); 
   const [access, setAccess] = useState<boolean>(false); 
   const [showUsers, setShowUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteClick, setDeleteClick] = useState(true);
-  const [rentedBooks, setRentedBooks] = useState<[Rent]|[]>([]);
-  const [cartItems, setCartItems] = useState<[Cart]|[]>([]);
-  const [lendedBooks, setLendedBooks] = useState<[Book] | []>([]);
+  const [rentedBooks, setRentedBooks] = useState<Rent[]>([]);
+  const [cartItems, setCartItems] = useState<Cart[]>([]);
+  const [lendedBooks, setLendedBooks] = useState<Book[]>([]);
   const [error, setError] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      const storedUsername = localStorage.getItem('username');
-      const storedAdmin = localStorage.getItem('admin');
-  
-      if (storedUsername) {
-        setUsername(storedUsername);
-      }
-  
-      if (storedAdmin === 'true') {
-        setAccess(true);
-      }
-    }, 1000);
-    setLoading(false);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const fetchAdminStatus = async () => {
-      if (username&&access) {
+    if (!isSignedIn) {
+      const checkUser = async () => {
+          await authenticate();
+        };
+        checkUser();
+  }
+    if (isLoaded && user) {
+      const checkAdminStatus = async () => {
         setLoading(true);
         try {
-          const response = await axios.get(`/api/admin?username=${username}`);
+          const response = await axios.get(`/api/admin?username=${user.username}`);
           if (response.data.status === true) {
             setShowUsers(response.data.users);
+            setAccess(true);
           } else {
             console.log("Admin access denied");
             setAccess(false);
@@ -100,24 +89,21 @@ function AdminPage() {
         } finally {
           setLoading(false);
         }
-      }
-    };
+      };
 
-    if (access) {
-      fetchAdminStatus();
+      checkAdminStatus();
     }
-  }, [access,username, deleteClick]);
+  }, [isLoaded, user]);
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const response = await axios.post("/api/admin", {
-        username: username,
+        username: user?.username,
         password: password,
       });
 
       if (response.data.status === true) {
-        localStorage.setItem('admin', 'true');
         setAccess(true);
       } else {
         alert(response.data.message);
@@ -125,26 +111,6 @@ function AdminPage() {
     } catch (err) {
       console.log("Error logging in:", err);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.put("/api/admin/logout", {
-        username: username
-      });
-      if (response.data.status === true) {
-        setAccess(false);
-        setShowUsers([]);
-        setSelectedUserId(null);
-      }
-      
-    } catch (err) {
-      console.error("Error logging out:", err);
-    } finally {
-      localStorage.removeItem('admin');
       setLoading(false);
     }
   };
@@ -170,7 +136,6 @@ function AdminPage() {
       } else {
         throw new Error(data.message || 'Unknown error occurred');
       }
-      
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -218,7 +183,6 @@ function AdminPage() {
         </div>
       ) : (
         <div>
-          <button onClick={handleLogout}>Logout</button>
           <div className="flex flex-col mt-4">
             {showUsers.length > 0 ? (
               showUsers.map((user) => (
@@ -229,7 +193,7 @@ function AdminPage() {
                   <span>{user.reports.toString()}</span>
                   <span 
                     className="cursor-pointer underline" 
-                    onClick={e => handleUser(user._id)}> 
+                    onClick={() => handleUser(user._id)}> 
                     more
                   </span>
                   <button onClick={() => handleDelete(user._id)}><DeleteIcon/></button>
@@ -240,7 +204,7 @@ function AdminPage() {
             )}
           </div>
 
-          {selectedUserId!=null && (
+          {selectedUserId != null && (
             <div className="mt-4">
               <Details rented={rentedBooks} cart={cartItems} lended={lendedBooks} />
             </div>

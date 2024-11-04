@@ -5,6 +5,8 @@ import Loading from '@/components/Loading/Loading';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useUser } from '@clerk/nextjs'; // Import Clerk's useUser hook
+import authenticate from '@/server/action';
 
 interface Book {
     _id: string;
@@ -37,28 +39,27 @@ function Page() {
     const [rentedBooks, setRentedBooks] = useState<RentedBook[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [username, setUsername] = useState<string | null>(null);
     const [returnClick, setReturnClick] = useState(true);
     const [deleteClick, setDeleteClick] = useState(true);
     const router = useRouter();
+    
+    const { user, isLoaded, isSignedIn } = useUser();
 
     useEffect(() => {
-        const storedUsername = localStorage.getItem('username');
-        console.log("Retrieved username from localStorage:", storedUsername);
-        if (storedUsername) {
-            setUsername(storedUsername);
-        } else {
-            setError("No username found in localStorage");
-            
-            setLoading(false);
+
+        if (!isSignedIn) {
+            const checkUser = async () => {
+                await authenticate();
+              };
+              checkUser();
         }
-    }, []);
-
-    useEffect(() => {
-        if (!username) return;
 
         const fetchRentedBooks = async () => {
             try {
+                if (!user) {
+                    throw new Error("User information is not available");
+                }
+                const username = user.username;
                 const response = await fetch(`/api/rent?username=${username}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
@@ -73,7 +74,7 @@ function Page() {
         };
 
         fetchRentedBooks();
-    }, [returnClick, deleteClick, username]);
+    }, [returnClick, deleteClick,isLoaded, isSignedIn, user]);
 
     // Handle book return
     const handleReturn = async (id: string) => {
@@ -81,7 +82,7 @@ function Page() {
             const response = await axios.patch(`/api/rent/${id}`, {
                 isReturned: true,
             });
-            if (response.data.status === true) {
+            if (response.data.status) {
                 alert("Book Returned Successfully");
             } else {
                 alert("Can't Return Book. Try Again Later");
@@ -89,7 +90,7 @@ function Page() {
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
-            setReturnClick(!returnClick); // Trigger re-fetch
+            setReturnClick(!returnClick);
         }
     };
 
@@ -97,7 +98,7 @@ function Page() {
     const handleDelete = async (id: string) => {
         try {
             const response = await axios.delete(`http://localhost:3000/api/rent/${id}`);
-            if (response.data.status === true) {
+            if (response.data.status) {
                 alert("Book Deleted Successfully from Orders");
             } else {
                 alert("Can't Delete Book. Try Again Later");
@@ -105,16 +106,13 @@ function Page() {
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
-            setDeleteClick(!deleteClick); // Trigger re-fetch
+            setDeleteClick(!deleteClick); 
         }
     };
 
-    // Loading state
     if (loading) {
         return <Loading />;
     }
-
-    // Error state
     if (error) {
         return (
             <div className="flex justify-center items-center min-h-screen">

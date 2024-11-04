@@ -6,6 +6,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import authenticate from '@/server/action';
 
 interface Book {
     _id: string;
@@ -31,32 +33,28 @@ interface ApiResponse {
 }
 
 function Page() {
+    const { user, isSignedIn } = useUser();
     const [cartBooks, setCartBooks] = useState<CartBook[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [input, setInput] = useState(false);
     const [duration, setDuration] = useState(0);
     const [activeId, setActiveId] = useState<string | null>(null);
-    const [username, setUsername] = useState<string | null>(null);
     const [deleteClick, setDeleteClick] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
-        const storedUsername = localStorage.getItem('username');
-        if (storedUsername) {
-            setUsername(storedUsername);
-        } else {
-            setError("No username found in localStorage");
-            setLoading(false);
+        if (!isSignedIn) {
+            const checkUser = async () => {
+                await authenticate();
+              };
+              checkUser();
         }
-    }, []);
-
-    useEffect(() => {
-        if (username) {
+        if (user) {
             const fetchCartBooks = async () => {
                 setLoading(true);
                 try {
-                    const response = await fetch(`/api/addtocart?username=${username}`);
+                    const response = await fetch(`/api/addtocart?username=${user.username}`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch data');
                     }
@@ -70,8 +68,11 @@ function Page() {
             };
 
             fetchCartBooks();
+        } else {
+            setError("No user found");
+            setLoading(false);
         }
-    }, [username, deleteClick]);
+    }, [user, deleteClick]);
 
     if (loading) {
         return <Loading />;
@@ -86,7 +87,6 @@ function Page() {
     }
 
     const handleDelete = async (id: string) => {
-        
         try {
             const response = await axios.delete(`http://localhost:3000/api/addtocart/${id}`);
             if (!response.data) {
@@ -97,7 +97,6 @@ function Page() {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setDeleteClick(!deleteClick);
-            
         }
     };
 
@@ -106,7 +105,7 @@ function Page() {
         if (input) {
             try {
                 const response = await axios.post(`http://localhost:3000/api/rent/${id}`, {
-                    username: localStorage.getItem('username'),
+                    username: user?.username,
                     duration: duration,
                 });
 
