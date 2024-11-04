@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import authenticate from "@/server/action"; // Update with your actual path
 
 export default function RootLayout({
   children,

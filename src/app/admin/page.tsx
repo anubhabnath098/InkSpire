@@ -75,6 +75,7 @@ function AdminPage() {
       const checkAdminStatus = async () => {
         setLoading(true);
         try {
+          console.log(user.username);
           const response = await axios.get(`/api/admin?username=${user.username}`);
           if (response.data.status === true) {
             setShowUsers(response.data.users);
@@ -93,7 +94,7 @@ function AdminPage() {
 
       checkAdminStatus();
     }
-  }, [isLoaded, user]);
+  }, [isLoaded, user, access]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -184,7 +185,7 @@ function AdminPage() {
       ) : (
         <div>
           <div className="flex flex-col mt-4">
-            {showUsers.length > 0 ? (
+            {showUsers?.length > 0 ? (
               showUsers.map((user) => (
                 <div className="flex gap-4" key={user.clerkId}>
                   <span>{user.username}</span>
