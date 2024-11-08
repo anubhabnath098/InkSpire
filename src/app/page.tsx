@@ -16,23 +16,24 @@ export default async function Home() {
       <Book />
 
       <div className="w-full flex justify-center py-8">
-        <div className="max-w-full lg:max-w-4xl text-center">
+        <div className="w-full lg:max-w-6xl text-center">
           <h2 className="text-[30px] font-bold text-red-800 mb-4">
             Watch This for a Full Tour
           </h2>
-          
-          <video
-            className="w-full rounded-xl shadow-2xl"
-            controls
-            loop
-            muted
-            src="/recording.mp4"
-          >
-            Your browser does not support the video tag.
-          </video>
+
+          <div className="w-full relative" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl"
+              src="https://www.youtube.com/embed/8mOb9cRjykM"
+              title="Full Tour Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
