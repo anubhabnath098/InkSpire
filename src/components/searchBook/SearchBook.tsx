@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import BookCard from '../bookCard/bookCard';
 import Image from 'next/image';
 import Loading from '../Loading/Loading'
-import { res_el } from '@/app/library/page';
+import { Book } from '@/app/admin/page';
 const SearchBook = ({books}:any) => {
     const [cancel, setCancel] = useState(false);
 
@@ -14,7 +14,7 @@ const SearchBook = ({books}:any) => {
         <div>
           <div className="w-[100%] flex justify-center items-start gap-[10px] mt-[5px]">
             <div className='grid grid-cols-3 gap-1.5'>
-              {books.map((book:res_el) => (
+              {books.map((book:Book) => (
                 <BookCard key={book._id} data={book} />
               ))}
             </div>

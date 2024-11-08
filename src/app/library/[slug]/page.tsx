@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import './bookDetails.css';
 import Loading from '@/components/Loading/Loading';
 import axios from 'axios';
+import { useUser } from '@clerk/nextjs';
+import authenticate from '@/server/action';
 
 interface res_el {
   _id: string;
@@ -26,6 +28,7 @@ function Page() {
   const { slug } = useParams();
   const [loading, setLoading] = useState(true);
   const slugString = Array.isArray(slug) ? slug[0] : slug;
+  const { user, isLoaded, isSignedIn } = useUser();
 
   useEffect(()=>{
     const getBook = async()=>{
@@ -49,23 +52,16 @@ function Page() {
   },[slugString]);
 
   const handleRent=async()=>{
+    if (!isSignedIn) {
+      const checkUser = async () => {
+          await authenticate();
+        };
+        checkUser();
+  }
     if(input){
-      try{
-        const response = await axios.post(`http://localhost:3000/api/rent/${slugString}`,{
-        username:localStorage.getItem('username'),
-        duration:duration
-      })
-      if(response.data.status===true){
-        router.push("/orders");
+      if(book){
+        router.push(`http://localhost:3000/payment?username=${user?.username}&amount=${(duration*book.price).toString()}&bookId=${slugString}&duration=${duration.toString()}`)
       }
-      else{
-        setInput(false);
-        alert(response.data.message);
-      }
-    }catch(err){
-      setInput(false);
-      alert("Issue. Try again later")
-    }
     }
     else{
       setInput(true);
@@ -131,10 +127,11 @@ function Page() {
           <img src="/star_icon.png" alt="" />
         </div>
 
-        <div className="pd-right-prices">
+        <div className="pd-right-prices flex gap-2">
           <div className="pd-right-price-new">
             {book.price}
           </div>
+          <div className="pd-right-price-new">/day</div>
         </div>
 
         <div className="pd-right-description">

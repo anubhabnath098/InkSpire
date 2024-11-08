@@ -24,6 +24,7 @@ interface RentedBook {
     username: string;
     book: Book;
     duration: number;
+    amount:number;
     isReturned: boolean;
     createdAt: string;
     updatedAt: string;
@@ -74,7 +75,7 @@ function Page() {
         };
 
         fetchRentedBooks();
-    }, [returnClick, deleteClick,isLoaded, isSignedIn, user]);
+    }, [returnClick, deleteClick, isLoaded, isSignedIn, user]);
 
     // Handle book return
     const handleReturn = async (id: string) => {
@@ -122,21 +123,21 @@ function Page() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 relative top-[50px] z-0">
-            <h1 className="text-3xl font-bold mb-8 text-center">Your Rented Books</h1>
+        <div className="container mx-auto px-4 py-8 relative top-[50px] z-0 bg-gradient-to-r from-red-100 via-red-200 to-red-300 transition-all duration-300">
+            <h1 className="text-3xl font-bold mb-8 text-center text-red-950 opacity-90 hover:opacity-100 transition-opacity duration-300">Your Rented Books</h1>
             <div className="space-y-6">
                 {rentedBooks.map((rental) => (
                     <div
                         key={rental._id}
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 max-w-2xl mx-auto"
+                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 ease-in-out max-w-2xl mx-auto"
                     >
                         <div className="flex flex-col md:flex-row">
-                            <div className="md:w-1/3 relative h-48 md:h-auto">
+                            <div className="md:w-1/3 relative h-48 md:h-auto overflow-hidden rounded-lg">
                                 <Image
                                     src={rental.book.url}
                                     alt={rental.book.name}
                                     fill
-                                    className="object-cover"
+                                    className="object-cover transition-all duration-500 ease-in-out hover:shadow-2xl"
                                 />
                             </div>
                             <div className="p-6 md:w-2/3">
@@ -152,7 +153,7 @@ function Page() {
                                 <div className="mt-4 flex flex-wrap gap-4">
                                     <div className="flex items-center">
                                         <span className="text-gray-700 font-medium">Price:</span>
-                                        <span className="ml-2 text-green-600">${rental.book.price}</span>
+                                        <span className="ml-2 text-green-600">${rental.amount}</span>
                                     </div>
                                     <div className="flex items-center">
                                         <span className="text-gray-700 font-medium">Lender:</span>
@@ -160,24 +161,24 @@ function Page() {
                                     </div>
                                 </div>
                                 <div className="mt-4">
-                                    <span className={`px-4 py-3 rounded text-sm font-medium `}>
+                                    <span className={`px-4 py-3 rounded text-sm font-medium`}>
                                         {rental.isReturned ? (
                                             <div className='flex gap-5'>
                                                 <button
-                                                    className='hover:underline font-bold text-green-700 text-lg'
+                                                    className='hover:underline font-bold text-green-700 text-lg transition-colors duration-300'
                                                     onClick={e => router.push(`/library/${rental.book._id}`)}
                                                 >
                                                     Rent Again
                                                 </button>
                                                 <DeleteOutlineIcon
-                                                    className='hover:cursor-pointer'
+                                                    className='hover:cursor-pointer hover:text-red-600 transition-colors duration-300'
                                                     onClick={e => handleDelete(rental._id)}
                                                 />
                                             </div>
                                         ) : (
                                             <div>
                                                 <button
-                                                    className='hover:underline font-bold text-red-950 text-lg'
+                                                    className='hover:underline font-bold text-red-950 text-lg transition-colors duration-300'
                                                     onClick={e => handleReturn(rental._id)}
                                                 >
                                                     Return

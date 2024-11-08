@@ -1,130 +1,164 @@
-"use client"
-import { Description } from '@mui/icons-material';
+"use client";
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Footer from '@/components/footer/Footer';
+
+interface Book {
+    name: string;
+    url: string;
+    author: string;
+    description: string;
+    price: number;
+    isbn: string;
+    username: string | null;
+}
 
 function Page() {
     const router = useRouter();
-    const [book, setBook] = useState({
+    const [book, setBook] = useState<Book>({
         name: "",
         url: '',
         author: '',
         description: '',
         price: 0,
         isbn: '',
-        username:''
+        username: localStorage.getItem('username')
     });
 
-    // Handle text input changes
-    const handleChange = (e:any) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setBook(prevBook => ({
             ...prevBook,
             [name]: value
         }));
-    }
+    };
 
-    const handleFileChange = (e:any) => {
-        const file = e.target.files[0];
-        setBook(prevBook => ({
-            ...prevBook,
-            url: "/"+file.name
-        }));
-    }
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files ? e.target.files[0] : null;
+        if (file) {
+            setBook(prevBook => ({
+                ...prevBook,
+                url: "/" + file.name
+            }));
+        }
+    };
 
-    const handleClick = async() => {
-        const response = await axios.post("http://localhost:3000/api/add",{
-            name:book.name,
-            url:book.url,
-            author:book.author,
-            description:book.description,
-            price:book.price,
-            isbn:book.isbn,
-            username:localStorage.getItem('username')
-        })
-        if(response.data.status===false){
-            console.log(response);
-            alert("Message: "+(response.data?response.data.message:"Internal Server Error"));
+    const handleClick = async () => {
+        try {
+            const response = await axios.post("http://localhost:3000/api/add", {
+                ...book,
+                username: book.username
+            });
+
+            if (response.data.status === false) {
+                alert("Message: " + (response.data?.message || "Internal Server Error"));
+            } else {
+                router.push("/library");
+            }
+        } catch (error) {
+            console.error("An error occurred while submitting the book:", error);
+            alert("An error occurred. Please try again.");
         }
-        else{
-            router.push("/library");
-        }
-    }
+    };
 
     return (
-        <div className="flex items-center justify-center min-h-screen relative top-[50px]">
-            <div className="bg-white p-6 border-2 border-red-950 rounded-lg w-full max-w-xl">
-                <div className="mb-4">
-                    <label className="block text-red-950 font-semibold mb-2">Name:</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={book.name}
-                        onChange={handleChange}
-                        className="border-2 border-red-950 p-2 rounded w-full"
-                    />
+        <>
+        <div className="flex items-center justify-center min-h-screen p-8 relative">
+            <div className="bg-white p-8 shadow-lg rounded-lg w-full max-w-4xl border-t-4 border-red-400 relative top-[40px]">
+                <h2 className="text-3xl font-bold text-red-950 text-center mb-8">Upload Book Information</h2>
+                
+                <div className="grid grid-cols-2 gap-8">
+                    {/* Name */}
+                    <div>
+                        <label className="block text-red-950 font-semibold mb-1">Book Name:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={book.name}
+                            onChange={handleChange}
+                            className="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400"
+                            placeholder="Enter the book name"
+                        />
+                    </div>
+
+                    {/* File Upload */}
+                    <div>
+                        <label className="block text-red-950 font-semibold mb-1">Book Cover:</label>
+                        <input
+                            type="file"
+                            name="url"
+                            onChange={handleFileChange}
+                            className="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400"
+                        />
+                    </div>
+
+                    {/* Author */}
+                    <div>
+                        <label className="block text-red-950 font-semibold mb-1">Author:</label>
+                        <input
+                            type="text"
+                            name="author"
+                            value={book.author}
+                            onChange={handleChange}
+                            className="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400"
+                            placeholder="Enter the author's name"
+                        />
+                    </div>
+
+                    {/* ISBN */}
+                    <div>
+                        <label className="block text-red-950 font-semibold mb-1">ISBN:</label>
+                        <input
+                            type="text"
+                            name="isbn"
+                            value={book.isbn}
+                            onChange={handleChange}
+                            className="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400"
+                            placeholder="Enter the ISBN"
+                        />
+                    </div>
+
+                    {/* Description */}
+                    <div className="col-span-2">
+                        <label className="block text-red-950 font-semibold mb-1">Description:</label>
+                        <textarea
+                            name="description"
+                            value={book.description}
+                            onChange={handleChange}
+                            className="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400"
+                            placeholder="Describe the book"
+                            rows={4}
+                        />
+                    </div>
+
+                    {/* Price and Submit Button in the same row */}
+                    <div className="flex space-x-4 items-end">
+                        <div className="flex-grow">
+                            <label className="block text-red-950 font-semibold mb-1">Price:</label>
+                            <input
+                                type="number"
+                                name="price"
+                                value={book.price}
+                                onChange={handleChange}
+                                className="border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400"
+                                placeholder="Enter the price"
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleClick}
+                            className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-500 transition duration-300"
+                        >
+                            Submit
+                        </button>
+                    </div>
                 </div>
-                <div className="mb-4">
-                    <label className="block text-red-950 font-semibold mb-2">URL:</label>
-                    <input
-                        type="file"
-                        name="url"
-                        onChange={handleFileChange}
-                        className="border-2 border-red-950 p-2 rounded w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-red-950 font-semibold mb-2">Author:</label>
-                    <input
-                        type="text"
-                        name="author"
-                        value={book.author}
-                        onChange={handleChange}
-                        className="border-2 border-red-950 p-2 rounded w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-red-950 font-semibold mb-2">Description:</label>
-                    <input
-                        type="text"
-                        name="description"
-                        value={book.description}
-                        onChange={handleChange}
-                        className="border-2 border-red-950 p-2 rounded w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-red-950 font-semibold mb-2">Price:</label>
-                    <input
-                        type="number"
-                        name="price"
-                        value={book.price}
-                        onChange={handleChange}
-                        className="border-2 border-red-950 p-2 rounded w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-red-950 font-semibold mb-2">ISBN:</label>
-                    <input
-                        type="text"
-                        name="isbn"
-                        value={book.isbn}
-                        onChange={handleChange}
-                        className="border-2 border-red-950 p-2 rounded w-full"
-                    />
-                </div>
-                <button
-                    onClick={handleClick}
-                    className="bg-red-400 text-white font-bold p-2 rounded w-full hover:bg-red-950 hover:text-red-400 transition duration-300"
-                >
-                    Submit
-                </button>
             </div>
         </div>
+        <Footer/>
+        </>
     );
-    
-    
 }
 
 export default Page;

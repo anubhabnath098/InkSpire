@@ -126,13 +126,13 @@ function Page() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 relative top-[50px] z-0">
-            <h1 className="text-3xl font-bold mb-8 text-center">Your Cart</h1>
+        <div className="container mx-auto px-4 py-8 relative top-[50px] z-0 bg-gradient-to-r from-red-100 via-red-200 to-red-300 transition-all duration-300">
+            <h1 className="text-3xl font-bold mb-8 text-center text-red-950">Your Cart</h1>
             <div className="space-y-6">
                 {cartBooks.map((rental) => (
                     <div
                         key={rental._id}
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 max-w-2xl mx-auto"
+                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 ease-in-out max-w-2xl mx-auto"
                     >
                         <div className="flex flex-col md:flex-row">
                             <div className="md:w-1/3 relative h-48 md:h-auto">

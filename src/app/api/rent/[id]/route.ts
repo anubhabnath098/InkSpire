@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             );
         }
         
-        const {username, duration} = body;
+        const {username, duration, amount} = body;
 
         if (!username || !duration) {
             return NextResponse.json(
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         }
         const book = await Books.findById(id);
         if(book){
-            const rentedBook = await new Rent({ username, book, duration, isReturned:false });
+            const rentedBook = await new Rent({ username, book,amount, duration, isReturned:false });
             rentedBook.save();
             return NextResponse.json({
                 book: rentedBook,

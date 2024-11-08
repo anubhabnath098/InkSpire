@@ -1,16 +1,29 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-
-const isProtectedRoute = createRouteMatcher([''])
-
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect()
-})
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+ 
+export function middleware(request: NextRequest) {
+  const origin = request.headers.get('origin') ?? ''
+  
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://www.localhost:3000',
+    // Add more origins as needed
+  ]
+  
+  // Option 1: Allow specific origins
+  const isAllowedOrigin = allowedOrigins.includes(origin)
+  
+  return NextResponse.next({
+    headers: {
+      'Access-Control-Allow-Origin': isAllowedOrigin ? origin : '',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400',
+    },
+  })
+}
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+  matcher: '/api/:path*',
 }
