@@ -1,7 +1,16 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
- 
-export function middleware(request: NextRequest) {
+import type { NextRequest, NextFetchEvent } from 'next/server'
+
+const isProtectedRoute = createRouteMatcher([''])
+
+export default async function middleware(request: NextRequest, event: NextFetchEvent) {
+  // Clerk authentication
+  const auth = clerkMiddleware((auth, req) => {
+    if (isProtectedRoute(req)) auth().protect()
+  })
+
+  // CORS handling
   const origin = request.headers.get('origin') ?? ''
   
   const allowedOrigins = [
@@ -10,20 +19,38 @@ export function middleware(request: NextRequest) {
     // Add more origins as needed
   ]
   
-  // Option 1: Allow specific origins
   const isAllowedOrigin = allowedOrigins.includes(origin)
   
-  return NextResponse.next({
-    headers: {
-      'Access-Control-Allow-Origin': isAllowedOrigin ? origin : '',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Max-Age': '86400',
-    },
-  })
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': isAllowedOrigin ? origin : '',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Max-Age': '86400',
+  }
+
+  // First, handle CORS logic for API routes
+  if (request.url.includes('/api/')) {
+    const response = NextResponse.next({
+      headers: corsHeaders,
+    })
+
+    // If it's an OPTIONS request (pre-flight), return early to avoid further processing
+    if (request.method === 'OPTIONS') {
+      return response
+    }
+
+    // Otherwise, proceed with the CORS headers applied
+    return response
+  }
+
+  // Now run Clerk authentication logic
+  return auth(request, event)
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
 }

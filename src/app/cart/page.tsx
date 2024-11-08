@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import authenticate from '@/server/action';
+import { motion } from 'framer-motion';
 
 interface Book {
     _id: string;
@@ -100,22 +101,13 @@ function Page() {
         }
     };
 
-    const handleRent = async (id: string, cartId: string) => {
+    const handleRent = async (id: string, cartId: string, price:number) => {
         setActiveId(cartId);
         if (input) {
             try {
-                const response = await axios.post(`http://localhost:3000/api/rent/${id}`, {
-                    username: user?.username,
-                    duration: duration,
-                });
-
-                if (response.data.status === true) {
-                    await axios.delete(`http://localhost:3000/api/addtocart/${cartId}`);
-                    router.push("/orders");
-                } else {
-                    setInput(false);
-                    alert(response.data.message);
-                }
+                router.push(`http://localhost:3000/payment?username=${user?.username}&amount=${(duration*price).toString()}&bookId=${id}&duration=${duration.toString()}`)
+                setInput(false);
+                
             } catch (err) {
                 setInput(false);
                 alert("Issue. Try again later");
@@ -125,14 +117,51 @@ function Page() {
         }
     };
 
+    const cardVariants = {
+        hidden: { opacity: 0, y: 700 },
+        visible: (i: number) => ({
+            opacity: 1,
+            y: 0,
+            transition: {
+                delay: i * 0.2,
+                duration: 0.5,
+                ease: "easeOut",
+            },
+        }),
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 relative top-[50px] z-0 bg-gradient-to-r from-red-100 via-red-200 to-red-300 transition-all duration-300">
+            <div className="fixed top-10 left-0 p-4">
+                <Image
+                    src="/gif3.gif"
+                    alt="Top Left GIF"
+                    width={100}
+                    height={100}
+                    className="object-cover  h-[100px] w-[100px]"
+                />
+            </div>
+            
+            {/* GIF at top-right */}
+            <div className="fixed bottom-0 right-0 p-4">
+                <Image
+                    src="/gif1.gif"
+                    alt="Top Right GIF"
+                    width={100}
+                    height={100}
+                    className="object-cover h-[150px] w-[150px]"
+                />
+            </div>
             <h1 className="text-3xl font-bold mb-8 text-center text-red-950">Your Cart</h1>
             <div className="space-y-6">
-                {cartBooks.map((rental) => (
-                    <div
+                {cartBooks.map((rental, index) => (
+                    <motion.div
                         key={rental._id}
                         className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 ease-in-out max-w-2xl mx-auto"
+                        variants={cardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={index}
                     >
                         <div className="flex flex-col md:flex-row">
                             <div className="md:w-1/3 relative h-48 md:h-auto">
@@ -160,7 +189,7 @@ function Page() {
                                     <div className="flex gap-5">
                                         <DeleteOutlineIcon className="hover:cursor-pointer" onClick={() => handleDelete(rental._id)} />
                                         <span className="rent_now flex gap-6">
-                                            <LocalMallIcon className="hover:cursor-pointer" onClick={() => handleRent(rental.book._id, rental._id)} />
+                                            <LocalMallIcon className="hover:cursor-pointer" onClick={() => handleRent(rental.book._id, rental._id, rental.book.price)} />
                                             {input && activeId === rental._id && (
                                                 <div>
                                                     Duration <input className="h-[40px] w-[70px] p-3 rounded border-2 border-gray-700" type="number" value={duration} onChange={(e) => setDuration(parseInt(e.target.value))} placeholder="Enter Duration" />
@@ -172,7 +201,7 @@ function Page() {
                                 <div className="mt-4"></div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
         </div>

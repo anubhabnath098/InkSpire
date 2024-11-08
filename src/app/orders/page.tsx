@@ -5,7 +5,8 @@ import Loading from '@/components/Loading/Loading';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { useUser } from '@clerk/nextjs'; // Import Clerk's useUser hook
+import { useUser } from '@clerk/nextjs';
+import { motion } from 'framer-motion';
 import authenticate from '@/server/action';
 
 interface Book {
@@ -24,7 +25,7 @@ interface RentedBook {
     username: string;
     book: Book;
     duration: number;
-    amount:number;
+    amount: number;
     isReturned: boolean;
     createdAt: string;
     updatedAt: string;
@@ -43,16 +44,15 @@ function Page() {
     const [returnClick, setReturnClick] = useState(true);
     const [deleteClick, setDeleteClick] = useState(true);
     const router = useRouter();
-    
+
     const { user, isLoaded, isSignedIn } = useUser();
 
     useEffect(() => {
-
         if (!isSignedIn) {
             const checkUser = async () => {
                 await authenticate();
-              };
-              checkUser();
+            };
+            checkUser();
         }
 
         const fetchRentedBooks = async () => {
@@ -77,12 +77,9 @@ function Page() {
         fetchRentedBooks();
     }, [returnClick, deleteClick, isLoaded, isSignedIn, user]);
 
-    // Handle book return
     const handleReturn = async (id: string) => {
         try {
-            const response = await axios.patch(`/api/rent/${id}`, {
-                isReturned: true,
-            });
+            const response = await axios.patch(`/api/rent/${id}`, { isReturned: true });
             if (response.data.status) {
                 alert("Book Returned Successfully");
             } else {
@@ -95,10 +92,9 @@ function Page() {
         }
     };
 
-    // Handle book delete
     const handleDelete = async (id: string) => {
         try {
-            const response = await axios.delete(`http://localhost:3000/api/rent/${id}`);
+            const response = await axios.delete(`/api/rent/${id}`);
             if (response.data.status) {
                 alert("Book Deleted Successfully from Orders");
             } else {
@@ -107,7 +103,7 @@ function Page() {
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
-            setDeleteClick(!deleteClick); 
+            setDeleteClick(!deleteClick);
         }
     };
 
@@ -122,14 +118,56 @@ function Page() {
         );
     }
 
+    const cardVariants = {
+        hidden: { opacity: 0, y: 700 },
+        visible: (i: number) => ({
+            opacity: 1,
+            y: 0,
+            transition: {
+                delay: i * 0.2,
+                duration: 0.5,
+                ease: "easeOut",
+            },
+        }),
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 relative top-[50px] z-0 bg-gradient-to-r from-red-100 via-red-200 to-red-300 transition-all duration-300">
-            <h1 className="text-3xl font-bold mb-8 text-center text-red-950 opacity-90 hover:opacity-100 transition-opacity duration-300">Your Rented Books</h1>
+            {/* GIF at top-left */}
+            <div className="fixed top-10 left-0 p-4">
+                <Image
+                    src="/gif2.gif"
+                    alt="Top Left GIF"
+                    width={100}
+                    height={100}
+                    className="object-cover  h-[150px] w-[150px]"
+                />
+            </div>
+            
+            {/* GIF at top-right */}
+            <div className="fixed bottom-0 right-0 p-4">
+                <Image
+                    src="/gif1.gif"
+                    alt="Top Right GIF"
+                    width={100}
+                    height={100}
+                    className="object-cover h-[150px] w-[150px]"
+                />
+            </div>
+
+            <h1 className="text-3xl font-bold mb-8 text-center text-red-950 opacity-90 hover:opacity-100 transition-opacity duration-300">
+                Your Rented Books
+            </h1>
+
             <div className="space-y-6">
-                {rentedBooks.map((rental) => (
-                    <div
+                {rentedBooks.map((rental, index) => (
+                    <motion.div
                         key={rental._id}
                         className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 ease-in-out max-w-2xl mx-auto"
+                        variants={cardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={index}
                     >
                         <div className="flex flex-col md:flex-row">
                             <div className="md:w-1/3 relative h-48 md:h-auto overflow-hidden rounded-lg">
@@ -161,35 +199,33 @@ function Page() {
                                     </div>
                                 </div>
                                 <div className="mt-4">
-                                    <span className={`px-4 py-3 rounded text-sm font-medium`}>
+                                    <span className="px-4 py-3 rounded text-sm font-medium">
                                         {rental.isReturned ? (
                                             <div className='flex gap-5'>
                                                 <button
                                                     className='hover:underline font-bold text-green-700 text-lg transition-colors duration-300'
-                                                    onClick={e => router.push(`/library/${rental.book._id}`)}
+                                                    onClick={() => router.push(`/library/${rental.book._id}`)}
                                                 >
                                                     Rent Again
                                                 </button>
                                                 <DeleteOutlineIcon
                                                     className='hover:cursor-pointer hover:text-red-600 transition-colors duration-300'
-                                                    onClick={e => handleDelete(rental._id)}
+                                                    onClick={() => handleDelete(rental._id)}
                                                 />
                                             </div>
                                         ) : (
-                                            <div>
-                                                <button
-                                                    className='hover:underline font-bold text-red-950 text-lg transition-colors duration-300'
-                                                    onClick={e => handleReturn(rental._id)}
-                                                >
-                                                    Return
-                                                </button>
-                                            </div>
+                                            <button
+                                                className='hover:underline font-bold text-red-950 text-lg transition-colors duration-300'
+                                                onClick={() => handleReturn(rental._id)}
+                                            >
+                                                Return
+                                            </button>
                                         )}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
         </div>
