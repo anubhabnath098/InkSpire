@@ -1,0 +1,162 @@
+"use client";
+
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { BookOpen, DollarSign, ShoppingCart } from "lucide-react";
+import { PersonIcon } from "@radix-ui/react-icons";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useUser } from "@clerk/nextjs";
+import authenticate from "@/server/action";
+
+interface BookProductPageProps {
+  slugString: string;
+  title: string;
+  author: string;
+  lender: string;
+  price: number;
+  description: string;
+  imageSrc: string;
+  ISBN: string;
+  category?: string;
+}
+
+export function BookProductPageComponent({
+  slugString,
+  title,
+  author,
+  lender,
+  price,
+  description,
+  imageSrc,
+  ISBN,
+  category,
+}: BookProductPageProps) {
+  const router = useRouter();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const [input, setInput] = useState(false);
+  const [duration, setDuration] = useState(0);
+
+  const handleRent = async () => {
+    if (!isSignedIn) {
+      const checkUser = async () => {
+        await authenticate();
+      };
+      checkUser();
+    }
+    if (input) {
+      if (price) {
+        router.push(
+          `http://localhost:3000/payment?username=${user?.username}&amount=${(
+            duration * price
+          ).toString()}&bookId=${slugString}&duration=${duration.toString()}`
+        );
+      }
+    } else {
+      setInput(true);
+    }
+  };
+
+  const handleCart = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/addtocart/${slugString}`,
+        {
+          username: localStorage.getItem("username"),
+        }
+      );
+      if (response.data.status === true) {
+        router.push("/cart");
+      } else {
+        setInput(false);
+        alert(response.data.message);
+      }
+    } catch (err) {
+      setInput(false);
+      alert("Issue. Try again later");
+    }
+  };
+
+  return (
+    <div className="container max-w-6xl mx-auto px-4 py-8">
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="space-y-4">
+          <Card className="overflow-hidden max-w-[300px] mx-auto">
+            <CardContent className="p-0">
+              <Image
+                src={imageSrc}
+                alt={`Cover of ${title}`}
+                width={300}
+                height={450}
+                className="w-full h-auto object-cover"
+              />
+            </CardContent>
+          </Card>
+          {category && (
+            <div className="flex justify-center">
+              <Badge variant="secondary">{category}</Badge>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{title}</h1>
+            <p className="text-xl text-gray-600">by {author}</p>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="text-2xl font-bold text-green-600">
+              ${price.toFixed(2)} / day
+            </div>
+            <Button
+              className="bg-pink-500 hover:bg-pink-600"
+              onClick={handleRent}
+            >
+              Rent Now
+            </Button>
+            <Button variant="outline" onClick={handleCart}>
+              <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+            </Button>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-2">
+            <div className="flex items-center text-sm text-gray-600">
+              <PersonIcon className="mr-2 h-4 w-4" />
+              <span>Lent by {lender}</span>
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <BookOpen className="mr-2 h-4 w-4" />
+              <span>ISBN: {ISBN}</span>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Description</h2>
+            <p className="text-gray-700">{description}</p>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold">Details</h2>
+            <ul className="list-disc list-inside text-gray-700">
+              <li>First published in 1925</li>
+              <li>180 pages</li>
+              <li>Classic American Literature</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

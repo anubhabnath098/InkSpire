@@ -1,18 +1,13 @@
-"use client"
-import Bookpart from '@/components/Bookpart/Bookpart'
-import Footer from '@/components/footer/Footer';
-import Loading from '@/components/Loading/Loading';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
-import { Book } from '../admin/page';
+"use client";
+import Bookpart from "@/components/Bookpart/Bookpart";
+import Footer from "@/components/footer/Footer";
+import Loading from "@/components/Loading/Loading";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Book } from "../admin/page";
 function page() {
-
-  const router = useRouter();
-  
-  const [books, setBooks] = useState<[Book]| []>([]);
+  const [books, setBooks] = useState<[Book] | []>([]);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const getBooks = async () => {
@@ -24,8 +19,7 @@ function page() {
         }
       } catch (err) {
         console.error(err);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -33,18 +27,16 @@ function page() {
     getBooks();
   }, []);
 
-
-  if(loading){
-    return (<Loading/>);
+  if (loading) {
+    return <Loading />;
   }
 
-
   return (
-    <div className='flex flex-col w-full relative top-[50px]'>
-      <Bookpart books={books}/>
-      <Footer/>
+    <div className="flex flex-col w-full relative top-[50px]">
+      <Bookpart books={books} />
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default page
+export default page;

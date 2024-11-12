@@ -41,13 +41,17 @@ export function AdminDashboardComponent({ users }: { users: User[] }) {
         console.log("User deleted successfully:", data.message);
 
         // Update both localUsers and filteredUsers
-        const updatedUsers = localUsers.filter((user) => user._id !== data.deletedUser._id);
+        const updatedUsers = localUsers.filter(
+          (user) => user._id !== data.deletedUser._id
+        );
         setLocalUsers(updatedUsers);
-        setFilteredUsers(updatedUsers.filter(
-          (user) =>
-            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
-        ));
+        setFilteredUsers(
+          updatedUsers.filter(
+            (user) =>
+              user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              user.email.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
       } else {
         console.error("Failed to delete user:", data.message);
       }
@@ -73,8 +77,8 @@ export function AdminDashboardComponent({ users }: { users: User[] }) {
   };
 
   return (
-    <div className="min-h-screen w-screen pt-10 bg-gray-100 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <div className="min-h-screen w-screen pt-20 bg-gray-100 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Admin Dashboard

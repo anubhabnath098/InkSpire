@@ -1,12 +1,10 @@
 "use client";
-import SearchIcon from '@mui/icons-material/Search';
-import React, { useState } from 'react';
-import BookCard from '../bookCard/bookCard';
-import Loading from '../Loading/Loading';
-import { Book } from '@/app/admin/page';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import Search from '../Search/Search';
+import SearchIcon from "@mui/icons-material/Search";
+import React, { useState } from "react";
+import { Book } from "@/app/admin/page";
+import Search from "../Search/Search";
+import Link from "next/link";
+import { BookCardComponent } from "../book-card";
 
 interface Booksprop {
   books: Book[];
@@ -14,7 +12,6 @@ interface Booksprop {
 
 const BookList = ({ books }: Booksprop) => {
   const [search, setSearch] = useState(false);
-  const router = useRouter();
 
   const bookVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -30,45 +27,48 @@ const BookList = ({ books }: Booksprop) => {
   };
 
   return (
-    <div className='relative'>
-      <div className="w-full flex justify-end h-[50px] items-center text-white pr-6 absolute top-2">
-        <span
-          className='bg-red-400 w-[100px] cursor-pointer h-full text-center flex justify-center items-center rounded'
-          onClick={() => router.push("/library/addbook")}
-        >
-          Lend
-        </span>
-      </div>
+    <div className="w-full mx-auto py-10 ">
       {books && books.length > 0 ? (
-        <div>
-          <h1 className='font-serif text-[2rem] ml-8 font-bold text-red-950 p-5 flex gap-5'>
-            Browse through our extensive Library
+        <div className="max-w-6xl mx-auto relative">
+          <Link
+            className="cursor-pointer text-center flex justify-center items-center rounded-full bg-[#203e76] hover:bg-[#2a4b8d] px-6 py-2 absolute top-2 right-0 text-white"
+            href="/library/addbook"
+          >
+            Lend
+          </Link>
+          <div className="flex gap-6 mt-5 mb-8">
+            <h1 className="text-3xl font-semibold">
+              Browse through our extensive Library
+            </h1>
+
             <div
-              className='h-[50px] w-[50px] rounded-full bg-gray-300 flex justify-center cursor-pointer items-center transition-all hover:scale-110 relative z-20'
+              className="h-[50px] w-[50px] rounded-full bg-gray-300 flex justify-center cursor-pointer items-center transition-all hover:scale-110 relative z-20"
               onClick={() => setSearch(!search)}
             >
               <SearchIcon />
             </div>
-          </h1>
+          </div>
           {search && <Search />}
-          <div className="w-full flex justify-center items-start gap-[10px] mt-[5px]">
-            <div className='grid grid-cols-4 gap-1.5'>
+          <div className="w-full ">
+            <div className="grid grid-cols-4 w-full gap-y-10">
               {books.map((book: Book, index) => (
-                <motion.div
-                  key={book._id}
-                  variants={bookVariants}
-                  initial="hidden"
-                  animate="visible"
-                  custom={index}
-                >
-                  <BookCard data={book} />
-                </motion.div>
+                <div className="justify-self-center shadow-md rounded-xl">
+                  <BookCardComponent
+                    id={book._id}
+                    key={index}
+                    author={book.author}
+                    coverImage={book.url}
+                    lender={book.username}
+                    price={book.price}
+                    title={book.name}
+                  />
+                </div>
               ))}
             </div>
           </div>
         </div>
       ) : (
-        <div className='text-[50px] text-bold'>No Books Available</div>
+        <div className="text-[50px] text-bold">No Books Available</div>
       )}
     </div>
   );

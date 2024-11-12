@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import { NewNavbar } from "@/components/navbar";
 
 export default function RootLayout({
   children,
@@ -13,8 +14,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body>
-          <div className="flex">
+          {/* <div className="flex">
             <Navbar />
+          </div> */}
+          <div className="bg-green-500">
+            <NewNavbar />
           </div>
           {children}
         </body>
