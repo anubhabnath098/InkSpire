@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export function BookRecommendations() {
   const [activeTab, setActiveTab] = useState("For You");
-
-  const tabs = ["For You", "Genres", "Top selling"];
-
-  const books = [
+  const router = useRouter();
+  const book1 = [
     {
       title: "Rich Dad Poor Dad",
       image: "/rdpd.jpg",
@@ -28,6 +27,59 @@ export function BookRecommendations() {
       alt: "The Power of Your Subconscious Mind book cover",
     },
   ];
+  const book2 = [
+    {
+      title:"The Great Gatsby",
+      image:"/great.jpg",
+      alt:"F Scott Fitzgerald"
+  },
+  {
+    title:"To Kill a Mockingbird",
+    image:"/mocking.jpeg",
+      alt:"Harper Lee"
+  },
+  {
+    title:"The lord of the rings",
+    image:"/lord.png",
+      alt:"J.R.R Tolkien"
+  },
+  ]
+  const book3 = [
+    {
+      title:"Pride and Prejudice",
+      image:"/PRIDE.jpeg",
+      alt:"Jane Austen"
+  },
+  {
+    title:"The Catche in the rye",
+    image:"/CATCHER.jpeg",
+      alt:"J.D Salinfer"
+  },
+  {
+    title:"The Hunger Games",
+    image:"/HUNGER.jpeg",
+      alt:"Suzanne Collins"
+  }
+  ]
+  const [books,setBooks] = useState(book1);
+
+  const tabs = ["For You", "Genres", "Top selling"];
+  useEffect(()=>{
+    const changeRecommendation = ()=>{
+      if(activeTab===tabs[1]){
+        setBooks(book2);
+      }
+      else if(activeTab===tabs[2]){
+        setBooks(book3);
+      }
+      else{
+        setBooks(book1);
+      }
+    }
+    changeRecommendation();
+  },[activeTab])
+
+  
 
   return (
     <section className="p-6 md:p-8 bg-[#001233] rounded-[64px] max-w-6xl mx-auto shadow-2xl">
@@ -65,15 +117,13 @@ export function BookRecommendations() {
                 />
               </div>
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                <Button className="bg-white text-black hover:bg-white/90">
-                  Rent Now
-                </Button>
+                
               </div>
             </div>
           ))}
           <div className="flex items-center justify-center">
             <Link
-              href="/books"
+              href="/library"
               className="text-pink-500 hover:text-pink-400 transition-colors text-lg font-medium"
             >
               See all

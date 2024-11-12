@@ -40,7 +40,7 @@ export function BookProductPageComponent({
   const router = useRouter();
   const { user, isLoaded, isSignedIn } = useUser();
   const [input, setInput] = useState(false);
-  const [duration, setDuration] = useState(0);
+  const [duration, setDuration] = useState<number>(1);
 
   const handleRent = async () => {
     if (!isSignedIn) {
@@ -107,19 +107,20 @@ export function BookProductPageComponent({
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">{title}</h1>
-            <p className="text-xl text-gray-600">by {author}</p>
+            <p className="text-xl text-gray-600 mb-2">by {author}</p>
+            <span className='text-bold text-base text-blue-950'>{'('}${price}/day{')'}</span>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="text-2xl font-bold text-green-600">
-              ${price.toFixed(2)} / day
+            <div className="text-2xl font-bold text-green-600 w-32">
+              ${(price*duration).toFixed(2)}
             </div>
             <Button
               className="bg-pink-500 hover:bg-pink-600"
               onClick={handleRent}
             >
               Rent Now
-            </Button>
+            </Button><input className='w-12 bg-slate-300 h-9 rounded px-2' value={duration} onChange={e=>setDuration(parseInt(e.target.value)>0?parseInt(e.target.value):1)} type="number"></input>
             <Button variant="outline" onClick={handleCart}>
               <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
             </Button>

@@ -132,17 +132,7 @@ function Page() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 relative top-[50px] z-0 bg-gradient-to-r from-red-100 via-red-200 to-red-300 transition-all duration-300">
-            {/* GIF at top-left */}
-            <div className="fixed top-10 left-0 p-4">
-                <Image
-                    src="/gif2.gif"
-                    alt="Top Left GIF"
-                    width={100}
-                    height={100}
-                    className="object-cover  h-[150px] w-[150px]"
-                />
-            </div>
+        <div className="container mx-auto px-4 py-8 relative top-[50px] z-0 bg-gradient-to-r transition-all duration-300">
             
             {/* GIF at top-right */}
             <div className="fixed bottom-0 right-0 p-4">
@@ -155,7 +145,7 @@ function Page() {
                 />
             </div>
 
-            <h1 className="text-3xl font-bold mb-8 text-center text-red-950 opacity-90 hover:opacity-100 transition-opacity duration-300">
+            <h1 className="text-3xl font-bold mb-8 ml-[400px] hover:opacity-100 transition-opacity">
                 Your Rented Books
             </h1>
 

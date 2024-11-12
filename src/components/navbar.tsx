@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation"; // Use `usePathname` to get the current path
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,13 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { PersonIcon } from "@radix-ui/react-icons";
 import { useUser } from "@clerk/nextjs";
+import { SignOutButton } from "@clerk/nextjs";
 import Image from "next/image";
 
 export function NewNavbar() {
   const [isSticky, setIsSticky] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
-  // Get the current path
   const pathname = typeof window !== "undefined" ? usePathname() : null;
 
   useEffect(() => {
@@ -46,12 +46,12 @@ export function NewNavbar() {
 
   useEffect(() => {
     if (pathname !== "/") {
-      setIsSticky(true); // Make it sticky on all pages except the home page
+      setIsSticky(true);
       return;
     }
 
     const handleScroll = () => {
-      setIsSticky(window.scrollY > window.innerHeight); // Sticky after scrolling 100vh
+      setIsSticky(window.scrollY > window.innerHeight);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -115,7 +115,7 @@ export function NewNavbar() {
                 <DropdownMenuItem>
                   <Link href="/orders">Orders</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
+                <DropdownMenuItem><SignOutButton/></DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

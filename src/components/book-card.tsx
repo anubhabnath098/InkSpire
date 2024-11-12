@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, DollarSign } from "lucide-react";
 import { PersonIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface BookCardProps {
   id: string;
@@ -25,6 +27,26 @@ export function BookCardComponent({
   coverImage,
   price,
 }: BookCardProps) {
+
+  const router = useRouter();
+
+  const handleCart = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/addtocart/${id}`,
+        {
+          username: localStorage.getItem("username"),
+        }
+      );
+      if (response.data.status === true) {
+        router.push("/cart");
+      } else {
+        alert(response.data.message);
+      }
+    } catch (err) {
+      alert("Issue. Try again later");
+    }
+  };
   return (
     <Card className="w-[250px] overflow-hidden group">
       <div className="relative">
@@ -63,7 +85,7 @@ export function BookCardComponent({
               className="w-full bg-[#203e76] hover:bg-[#2a4b8d] text-white"
               asChild
             >
-              <Link href={`/library/${id}`}>Add to Cart</Link>
+              <button onClick={e=>handleCart()}>Add to Cart</button>
             </Button>
           </div>
         </div>

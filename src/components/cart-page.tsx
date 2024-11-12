@@ -8,8 +8,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trash2, ShoppingCart } from "lucide-react";
 import { PersonIcon } from "@radix-ui/react-icons";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 interface Book {
   _id: string;
@@ -22,15 +23,24 @@ interface Book {
   username: string;
 }
 
-interface CartBook {
+export interface CartBook {
   _id: string;
   username: string;
   book: Book;
+  duration: number;
 }
 
 export function CartPageComponent({ cartbooks }: { cartbooks: CartBook[] }) {
+  const { user } = useUser();
   const router = useRouter();
   const [books, setBooks] = useState(cartbooks);
+  const [durations, setDurations] = useState<number[]>([]);
+
+  useEffect(() => {
+    const initialDurations = books.map(() => 1);
+    setDurations(initialDurations);
+  }, [books]);
+
   const handleDelete = async (id: string, index: number) => {
     try {
       const updatedBooks = books.filter((_, i) => i !== index);
@@ -47,21 +57,37 @@ export function CartPageComponent({ cartbooks }: { cartbooks: CartBook[] }) {
     }
   };
 
-  // const handleRent = async (id: string, cartId: string, price: number) => {
-  //   try {
-  //     router.push(
-  //       `http://localhost:3000/payment?username=${user?.username}&amount=${(
-  //         duration * price
-  //       ).toString()}&bookId=${id}&duration=${duration.toString()}`
-  //     );
-  //     setInput(false);
-  //   } catch (err) {
-  //     setInput(false);
-  //     alert("Issue. Try again later");
-  //   }
-  // };
+  const subtotal = books.reduce(
+    (sum, item, index) => sum + item.book.price * durations[index],
+    0
+  );
 
-  const subtotal = books.reduce((sum, item) => sum + item.book.price, 0);
+  const handleCheckout = () => {
+    if(subtotal>0){
+      const cartBooksParam = encodeURIComponent(
+        JSON.stringify(
+          books.map((item, index) => ({
+            _id: item.book._id,
+            username: item.username,
+            price: item.book.price,
+            duration: durations[index],
+          }))
+        )
+      );
+  
+      router.push(
+        `/payment-from-cart?username=${user?.username}&amount=${subtotal}&cartItems=${cartBooksParam}`
+      );
+    }
+    
+  };
+
+  const handleDuration = (value: string, index: number) => {
+    const newDuration = parseInt(value) > 0 ? parseInt(value) : 1;
+    const updatedDurations = [...durations];
+    updatedDurations[index] = newDuration;
+    setDurations(updatedDurations);
+  };
 
   return (
     <div className="container mx-auto pt-4 max-w-6xl">
@@ -90,16 +116,20 @@ export function CartPageComponent({ cartbooks }: { cartbooks: CartBook[] }) {
                       ${item.book.price.toFixed(2)}/day
                     </p>
                     <div className="flex items-center gap-3">
-                      <p>duration</p>
+                      <p>Duration</p>
                       <input
                         className="h-2 w-14 p-3 rounded-md border-1 bg-neutral-200 border-neutral-600"
                         type="number"
+                        value={durations[index]}
+                        onChange={(e) =>
+                          handleDuration(e.target.value, index)
+                        }
                       />
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="font-bold">
-                      ${item.book.price.toFixed(2)}/day
+                      ${(item.book.price * durations[index]).toFixed(2)}
                     </p>
                     <Button
                       variant="ghost"
@@ -126,11 +156,17 @@ export function CartPageComponent({ cartbooks }: { cartbooks: CartBook[] }) {
               <Separator className="my-4" />
               <div className="flex justify-between mb-4">
                 <span className="font-semibold">Total</span>
-                <span className="font-semibold">
-                  ${subtotal.toFixed(2)}/week
+                <span className="flex gap-2">
+                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="text-sm italic">
+                    inclusive of all taxes
+                  </span>
                 </span>
               </div>
-              <Button className="w-full bg-pink-500 hover:bg-pink-600">
+              <Button
+                className="w-full bg-pink-500 hover:bg-pink-600"
+                onClick={handleCheckout}
+              >
                 <ShoppingCart className="mr-2 h-4 w-4" /> Proceed to Checkout
               </Button>
             </CardContent>
