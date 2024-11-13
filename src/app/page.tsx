@@ -66,6 +66,10 @@ export default async function Home() {
             </div>
           </div>
         </div>
+        <div className="w-full h-[600px] flex items-center justify-center">
+              <iframe src="https://www.youtube.com/embed/q7Fxxgx2BDY"  className="h-[80%]  w-[70%] shadow-xl rounded-xl" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen></iframe>
+        </div>
       </section>
       <Footer />
     </section>

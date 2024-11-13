@@ -66,11 +66,11 @@ export function BookProductPageComponent({
 
         const result = await response.json();
         const reviews = result.reviews;
-        const averageRating =
+        const averageRating = reviews.length!=0?
           reviews.reduce(
             (sum: number, review: Review) => sum + review.rating,
             0
-          ) / reviews.length;
+          ) / reviews.length:0;
 
         setAvgRating(Number(averageRating.toFixed(1)));
       } catch (error) {
