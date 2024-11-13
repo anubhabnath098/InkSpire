@@ -29,7 +29,7 @@ export function BookCardComponent({
 }: BookCardProps) {
 
   const router = useRouter();
-
+  
   const handleCart = async () => {
     try {
       const response = await axios.post(
@@ -91,5 +91,6 @@ export function BookCardComponent({
         </div>
       </div>
     </Card>
+    
   );
 }

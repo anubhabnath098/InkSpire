@@ -7,8 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, DollarSign, ShoppingCart } from "lucide-react";
 import { PersonIcon } from "@radix-ui/react-icons";
-
-import React, { useState } from "react";
+import ReviewComponent from "@/components/Review"
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
@@ -120,7 +120,7 @@ export function BookProductPageComponent({
               onClick={handleRent}
             >
               Rent Now
-            </Button><input className='w-12 bg-slate-300 h-9 rounded px-2' value={duration} onChange={e=>setDuration(parseInt(e.target.value)>0?parseInt(e.target.value):1)} type="number"></input>
+            </Button><input className='w-12 bg-slate-300 h-9 rounded px-2' value={duration} onChange={e=>setDuration(parseInt(e.target.value)>0?parseInt(e.target.value):1)} type="number"/>
             <Button variant="outline" onClick={handleCart}>
               <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
             </Button>
@@ -158,6 +158,7 @@ export function BookProductPageComponent({
           </div>
         </div>
       </div>
+      <ReviewComponent bookId={slugString}/>
     </div>
   );
 }
