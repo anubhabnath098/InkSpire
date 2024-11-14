@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/footer/Footer";
+import { useUser } from "@clerk/nextjs";
 
 interface Book {
   name: string;
@@ -11,10 +12,11 @@ interface Book {
   description: string;
   price: number;
   isbn: string;
-  username: string | null;
+  username: string | null |undefined;
 }
 
 function Page() {
+  const {user} = useUser();
   const router = useRouter();
   const [book, setBook] = useState<Book>({
     name: "",
@@ -23,7 +25,7 @@ function Page() {
     description: "",
     price: 0,
     isbn: "",
-    username: localStorage.getItem("username"),
+    username: user?.username,
   });
 
   const handleChange = (

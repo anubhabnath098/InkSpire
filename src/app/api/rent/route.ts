@@ -6,7 +6,7 @@ import { User } from '@/server/models/usermodels';
 
 export async function GET(req: NextRequest) {
     try {
-        const url = new URL(req.url);
+        const url = req.nextUrl;
         const username = url.searchParams.get('username');
 
         if (!username) {

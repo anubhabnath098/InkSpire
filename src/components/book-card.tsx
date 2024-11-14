@@ -9,6 +9,7 @@ import { PersonIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 interface BookCardProps {
   id: string;
@@ -27,15 +28,16 @@ export function BookCardComponent({
   coverImage,
   price,
 }: BookCardProps) {
+  const {user} = useUser();
 
   const router = useRouter();
   
   const handleCart = async () => {
     try {
       const response = await axios.post(
-        `/addtocart/${id}`,
+        `/api/addtocart/${id}`,
         {
-          username: localStorage.getItem("username"),
+          username:user?.username,
         }
       );
       if (response.data.status === true) {

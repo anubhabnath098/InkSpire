@@ -7,7 +7,9 @@ import Cart from '@/server/models/cartmodel';
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     try {
+        
         const {id} = params;
+        console.log(id);
         let body;
         try {
             body = await req.json();
@@ -19,6 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         }
         
         const {username} = body;
+        
 
         if (!username) {
             return NextResponse.json(
