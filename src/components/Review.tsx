@@ -38,6 +38,7 @@ const ReviewComponent = ({ bookId }: { bookId: string }) => {
 
         const result = await response.json();
         if (result.status) {
+          // console.log(result.reviews);
           setReviews(result.reviews);
         } else {
           console.error("Failed to add review:", result.message);
@@ -83,6 +84,7 @@ const ReviewComponent = ({ bookId }: { bookId: string }) => {
         setNewReview("");
       } else {
         console.error("Failed to add review:", result.message);
+        alert("Please login to add Review!!");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -146,8 +148,8 @@ const ReviewComponent = ({ bookId }: { bookId: string }) => {
                     date={review.createdAt}
                     rating={review.rating}
                     review={review.reviewText}
-                    username={user?.username || ""}
-                    avatarUrl={user?.imageUrl}
+                    username={review.userId.username || ""}
+                    avatarUrl={`/defaultprofile.jpg`}
                     key={user?.id}
                   />
                 </li>

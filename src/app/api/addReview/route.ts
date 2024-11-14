@@ -10,10 +10,10 @@ export async function POST(req: NextRequest) {
 
     // Validate required data
     if (!bookId || !username || rating == null || !reviewText) {
-      console.log("USERNAME: ", username);
-      console.log("rating: ", rating);
-      console.log("newReview: ", reviewText);
-      console.log("bookid: ", bookId);
+      // console.log("USERNAME: ", username);
+      // console.log("rating: ", rating);
+      // console.log("newReview: ", reviewText);
+      // console.log("bookid: ", bookId);
       return NextResponse.json(
         {
           message: "Book ID, username, rating, and reviewText are required",
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
-
+    // console.log(user);
     // Check if the book exists
     const book = await Books.findById(bookId);
     if (!book) {
