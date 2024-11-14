@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { name, url, author, description, price, isbn, username } = body;
+    console.log(body);
 
     if (!name || !url || !author || !description || !price || !isbn || !username) {
       return NextResponse.json(
