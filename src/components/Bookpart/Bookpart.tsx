@@ -28,6 +28,7 @@ const BookList = ({ books }: Booksprop) => {
 
   return (
     <div className="w-full mx-auto py-10 ">
+      
       {books && books.length > 0 ? (
         <div className="max-w-6xl mx-auto relative">
           <Link

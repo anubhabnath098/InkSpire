@@ -48,7 +48,7 @@ function Page() {
 
   const handleClick = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/api/add", {
+      const response = await axios.post("/api/add", {
         ...book,
         username: book.username,
       });

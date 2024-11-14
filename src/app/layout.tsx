@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect } from "react";
-import Navbar from "@/components/Navbar/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { NewNavbar } from "@/components/navbar";

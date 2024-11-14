@@ -55,7 +55,7 @@ export function BookProductPageComponent({
     const fetchReviews = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/addReview/${slugString}`,
+          `/api/addReview/${slugString}`,
           {
             method: "GET",
             headers: {

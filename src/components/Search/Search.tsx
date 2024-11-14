@@ -23,7 +23,7 @@ function Search() {
     const handleSearch = async () => {
       try {
         //console.log(bookname, authorname);
-        const response = await axios.post('http://localhost:3000/api/search', {
+        const response = await axios.post('/api/search', {
           name: bookname,
           author: authorname
         });

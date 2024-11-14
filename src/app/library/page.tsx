@@ -12,7 +12,7 @@ function page() {
   useEffect(() => {
     const getBooks = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/allbooks");
+        const response = await axios.get("/api/allbooks");
         if (response.data.status === false) {
         } else {
           setBooks(response.data.books || []);

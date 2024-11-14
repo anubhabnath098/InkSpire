@@ -46,7 +46,7 @@ export function CartPageComponent({ cartbooks }: { cartbooks: CartBook[] }) {
       const updatedBooks = books.filter((_, i) => i !== index);
       setBooks(updatedBooks);
       const response = await axios.delete(
-        `http://localhost:3000/api/addtocart/${id}`
+        `/api/addtocart/${id}`
       );
       if (!response.data) {
         throw new Error("Failed to delete item from cart");

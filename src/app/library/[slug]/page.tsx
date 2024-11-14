@@ -27,7 +27,7 @@ function Page() {
     const getBook = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/search/${slugString}`
+          `/api/search/${slugString}`
         );
         console.log(response);
         if (response.data.book) setBook(response.data.book);

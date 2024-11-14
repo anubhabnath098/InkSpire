@@ -27,7 +27,7 @@ const ReviewComponent = ({ bookId }: { bookId: string }) => {
     const fetchReviews = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/addReview/${bookId}`,
+          `/api/addReview/${bookId}`,
           {
             method: "GET",
             headers: {
@@ -60,7 +60,7 @@ const ReviewComponent = ({ bookId }: { bookId: string }) => {
     console.log("bookid: ", bookId);
 
     try {
-      const response = await fetch(`http://localhost:3000/api/addReview`, {
+      const response = await fetch(`/api/addReview`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

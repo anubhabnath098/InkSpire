@@ -33,7 +33,7 @@ export function BookCardComponent({
   const handleCart = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/addtocart/${id}`,
+        `/addtocart/${id}`,
         {
           username: localStorage.getItem("username"),
         }
