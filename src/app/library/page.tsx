@@ -5,7 +5,7 @@ import Loading from "@/components/Loading/Loading";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Book } from "../admin/page";
-function page() {
+function Page() {
   const [books, setBooks] = useState<[Book] | []>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,4 +39,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
