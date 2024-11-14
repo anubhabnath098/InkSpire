@@ -4,6 +4,8 @@ import React, { useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/footer/Footer";
 import { useUser } from "@clerk/nextjs";
+import { revalidatePath } from 'next/cache'
+
 
 interface Book {
   name: string;
@@ -60,8 +62,9 @@ function Page() {
           "Message: " + (response.data?.message || "Internal Server Error")
         );
       } else {
+        revalidatePath('/library')
         router.push("/library");
-        router.refresh();
+        
       }
     } catch (error) {
       console.error("An error occurred while submitting the book:", error);
