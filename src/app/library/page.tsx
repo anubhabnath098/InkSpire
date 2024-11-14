@@ -13,7 +13,12 @@ function Page() {
   useEffect(() => {
     const getBooks = async () => {
       try {
-        const response = await axios.get("/api/allbooks");
+        const response = await axios.get("/api/allbooks",{
+          headers: {
+            'Cache-Control': 'no-store, max-age=0',
+            'Pragma': 'no-cache',
+          },
+        });
         if (response.data.status === false) {
         } else {
           setBooks(response.data.books || []);
