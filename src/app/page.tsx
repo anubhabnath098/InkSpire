@@ -2,6 +2,7 @@ import { BookRecommendations } from "@/components/book-recommendations";
 import Footer from "@/components/footer/Footer";
 import { ProcessSteps } from "@/components/process-steps";
 import { auth } from "@clerk/nextjs/server";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
@@ -62,7 +63,7 @@ export default async function Home() {
               is yours.
             </h1>
             <div className="flex justify-center">
-              <img src="/choice/group.svg" className="max-w-4xl" />
+              <Image src="/choice/group.svg" alt ="" height={100} width={100} className="max-w-4xl" />
             </div>
           </div>
         </div>
