@@ -5,9 +5,11 @@ import Loading from "@/components/Loading/Loading";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Book } from "../admin/page";
+import { useRouter } from "next/navigation";
 function Page() {
   const [books, setBooks] = useState<[Book] | []>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const getBooks = async () => {
@@ -21,6 +23,8 @@ function Page() {
         console.error(err);
       } finally {
         setLoading(false);
+        router.refresh();
+        
       }
     };
 
