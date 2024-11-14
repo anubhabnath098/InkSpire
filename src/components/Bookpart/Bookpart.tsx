@@ -53,7 +53,7 @@ const BookList = ({ books }: Booksprop) => {
           <div className="w-full ">
             <div className="grid grid-cols-4 w-full gap-y-10">
               {books.map((book: Book, index) => (
-                <div className="justify-self-center shadow-md rounded-xl">
+                <div className="justify-self-center shadow-md rounded-xl" key={index}>
                   <BookCardComponent
                     id={book._id}
                     key={index}

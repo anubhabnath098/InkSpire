@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-function page({
+function Page({
   searchParams: { username, bookId, duration, amount },
 }: {
   searchParams: { username: string; amount: string; bookId: string; duration: string };
@@ -54,4 +54,4 @@ function page({
   );
 }
 
-export default page;
+export default Page;

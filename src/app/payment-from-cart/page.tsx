@@ -12,7 +12,7 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 }
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
-function page({
+function Page({
   searchParams: { username, amount, cartItems }
 }:{
     searchParams:{username:string,amount:string,cartItems:string}
@@ -43,4 +43,4 @@ function page({
   );
 }
 
-export default page;
+export default Page;

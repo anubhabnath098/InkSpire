@@ -25,7 +25,8 @@ export function NewNavbar() {
   const [isSticky, setIsSticky] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
-  const pathname = typeof window !== "undefined" ? usePathname() : null;
+  // Call `usePathname` without any conditions
+  const pathname = usePathname();
 
   useEffect(() => {
     const updateUserState = async () => {
@@ -45,7 +46,8 @@ export function NewNavbar() {
   }, [isLoaded, isSignedIn, user]);
 
   useEffect(() => {
-    if (pathname !== "/") {
+    // Check for pathname and set `isSticky` based on its value
+    if (pathname && pathname !== "/") {
       setIsSticky(true);
       return;
     }
