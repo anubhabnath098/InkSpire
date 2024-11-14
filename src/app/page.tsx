@@ -63,8 +63,16 @@ export default async function Home() {
               is yours.
             </h1>
             <div className="flex justify-center">
-              <Image src="/choice/group.svg" alt ="" height={100} width={100} className="max-w-4xl" />
-            </div>
+                <Image
+                  src="/choice/group.svg"
+                  alt="Group illustration"
+                  height={100}
+                  width={100}
+                  className="max-w-4xl"
+                  priority
+                />
+              </div>
+
           </div>
         </div>
         <div className="w-full h-[600px] flex items-center justify-center">
