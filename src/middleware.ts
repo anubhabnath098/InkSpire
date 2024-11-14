@@ -16,6 +16,8 @@ export default async function middleware(request: NextRequest, event: NextFetchE
   const allowedOrigins = [
     'http://localhost:3000',
     'http://www.localhost:3000',
+    'https://ink-spire-kappa.vercel.app',
+    'https://www.ink-spire-kappa.vercel.app/'
     // Add more origins as needed
   ]
   

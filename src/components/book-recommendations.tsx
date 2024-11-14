@@ -18,12 +18,12 @@ export function BookRecommendations() {
     },
     {
       title: "Pride And Prejudice",
-      image: "/Pride.jpeg",
+      image: "/lord.png",
       alt: "Atomic Habits book cover",
     },
     {
       title: "The Hunger Games",
-      image: "/Hunger.jpeg",
+      image: "/CATCHER.jpeg",
       alt: "The Power of Your Subconscious Mind book cover",
     },
   ];

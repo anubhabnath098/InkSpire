@@ -47,7 +47,7 @@ const CheckoutPage=({amount,username, bookId, duration}:{amount:number,username:
             elements,
             clientSecret,
             confirmParams:{
-                return_url: `http://www.localhost:3000/payment-success?username=${username}&amount=${amount}&bookId=${bookId}&duration=${duration}`,
+                return_url: `https://ink-spire-kappa.vercel.app/payment-success?username=${username}&amount=${amount}&bookId=${bookId}&duration=${duration}`,
             }
         })
         if(error){

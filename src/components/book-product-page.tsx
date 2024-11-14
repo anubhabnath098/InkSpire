@@ -91,7 +91,7 @@ export function BookProductPageComponent({
     if (input) {
       if (price) {
         router.push(
-          `http://localhost:3000/payment?username=${user?.username}&amount=${(
+          `/payment?username=${user?.username}&amount=${(
             duration * price
           ).toString()}&bookId=${slugString}&duration=${duration.toString()}`
         );
@@ -104,9 +104,9 @@ export function BookProductPageComponent({
   const handleCart = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/addtocart/${slugString}`,
+        `/api/addtocart/${slugString}`,
         {
-          username: localStorage.getItem("username"),
+          username: user?.username,
         }
       );
       if (response.data.status === true) {

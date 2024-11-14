@@ -54,7 +54,7 @@ const CheckoutCart = ({ amount, username, cartItems }: { amount: number, usernam
             elements,
             clientSecret,
             confirmParams: {
-                return_url: `http://www.localhost:3000/payment-success-from-cart?username=${username}&amount=${amount}&cartItems=${cartItems}`,
+                return_url: `https://ink-spire-kappa.vercel.app/payment-success-from-cart?username=${username}&amount=${amount}&cartItems=${cartItems}`,
             },
         });
 
