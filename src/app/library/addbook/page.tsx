@@ -61,6 +61,7 @@ function Page() {
         );
       } else {
         router.push("/library");
+        router.refresh();
       }
     } catch (error) {
       console.error("An error occurred while submitting the book:", error);
