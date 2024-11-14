@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
     if (!name || !url || !author || !description || !price || !isbn || !username) {
       return NextResponse.json(
         { message: "Please provide all fields correctly", status: false},
-        { status: 400 }
+        { 
+          status: 400,
+          headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' },
+        }
       );
     }
 
@@ -24,20 +27,26 @@ export async function POST(req: NextRequest) {
       description,
       price,
       isbn,
-      username:username
+      username: username,
     });
 
     await newBook.save();
     return NextResponse.json(
       { message: "Book created successfully", book: newBook, status: true },
-      { status: 201 }
+      { 
+        status: 201,
+        headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' },
+      }
     );
 
   } catch (err) {
     console.error(err);
     return NextResponse.json(
       { message: "An error occurred while creating the book", status: false },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' },
+      }
     );
   }
 }
